@@ -7,7 +7,7 @@ LIBS = -lglut -lportaudio
 CC = g++
 
 all: $(MAIN).o graphics_helper.o externals
-	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o $(LIBS)
+	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(LIBS)
 
 $(MAIN).o : $(MAIN).cpp
 	$(CC) $(INCDIRS) -c $(MAIN).cpp
@@ -18,7 +18,7 @@ graphics_helper.o : graphics_helper.cpp
 audio_helper.o : audio_helper.cpp
 	$(CC) $(INCDIRS) -c audio_helper.cpp
 
-externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o
+externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 
 GLShaderManager.o : $(SHAREDPATH)GLShaderManager.cpp
 	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLShaderManager.cpp
@@ -30,6 +30,8 @@ GLTools.o : $(SHAREDPATH)GLTools.cpp
 	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLTools.cpp
 glew.o : $(SHAREDPATH)glew.c
 	$(CC) $(INCDIRS) -c $(SHAREDPATH)glew.c
+math3d.o : $(SHAREDPATH)math3d.cpp
+	$(CC) $(INCDIRS) -c $(SHAREDPATH)math3d.cpp
 
 
 clean:
