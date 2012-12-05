@@ -4,17 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// OpenGL includes
-#include <GLTools.h>
-#include <GLShaderManager.h>
-#include <GLFrustum.h>
-#include <GLBatch.h>
-#include <GLMatrixStack.h>
-#include <GLGeometryTransform.h>
-#include <StopWatch.h>
-#define FREEGLUT_STATIC
-#include <GL/glut.h>
-
 // PortAudio includes
 #include <sndfile.h>
 #include <portaudio.h>
@@ -26,17 +15,20 @@
 
 Packet *sharedBuffer;
 
+
 int main(int argc, char *argv[]){
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
-    std::cout  << "Portaudio init\n";
-    std::cout  << "OpenGL init\n";
-    std::cout  << "Run portaudio\n";
-    std::cout  << "Run glut loops\n";
+    setupGlut(argc, argv);
 
-    // sanity check
-    sharedBuffer[40].samples[1] = 0.2f;
-    printf("Test: %0.2f\n", sharedBuffer[40].samples[1]);
+    GLenum err = glewInit();
+    if (GLEW_OK != err){
+        fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
+        return 1;
+    }
+
+    SetupRC();
+    glutMainLoop();
 
     free(sharedBuffer);
     return 0;

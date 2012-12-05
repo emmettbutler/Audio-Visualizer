@@ -11,8 +11,8 @@ LIBS = -lX11 -lglut -lGL -lGLU -lm -lportaudio
 prog : $(MAIN)
 
 $(MAIN).o : $(MAIN).cpp
-	$(CC) $(CFLAGS) -o $(MAIN).o $(MAIN).cpp
-
+	echo ""
+graphics_helper.o : graphics_helper.cpp
 glew.o    : $(SHAREDPATH)glew.c
 GLTools.o    : $(SHAREDPATH)GLTools.cpp
 GLBatch.o    : $(SHAREDPATH)GLBatch.cpp
@@ -22,7 +22,7 @@ math3d.o    : $(SHAREDPATH)math3d.cpp
 
 
 $(MAIN) : $(MAIN).o glew.o
-	$(CC) $(CFLAGS) -o $(MAIN) $(LIBDIRS) $(MAIN).cpp $(SHAREDPATH)glew.c $(SHAREDPATH)GLTools.cpp $(SHAREDPATH)GLBatch.cpp $(SHAREDPATH)GLTriangleBatch.cpp $(SHAREDPATH)GLShaderManager.cpp $(SHAREDPATH)math3d.cpp $(LIBS)
+	$(CC) $(CFLAGS) -o $(MAIN) $(LIBDIRS) $(MAIN).cpp $(SHAREDPATH)glew.c $(SHAREDPATH)GLTools.cpp $(SHAREDPATH)GLBatch.cpp $(SHAREDPATH)GLTriangleBatch.cpp $(SHAREDPATH)GLShaderManager.cpp $(SHAREDPATH)math3d.cpp graphics_helper.cpp $(LIBS)
 
 clean:
 	rm -f *.o
