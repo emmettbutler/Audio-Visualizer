@@ -3,6 +3,6 @@
 
 typedef struct _packet{
     float samples[PACKET_SIZE];  // PACKET_SIZE samples
-    int free;  // is this packet free to overwrite
-    int order;  // where in the sequence of samples is this packet
+    bool free;  // is this packet free to overwrite
+    bool order;  // where in the sequence of samples is this packet
 } Packet;
