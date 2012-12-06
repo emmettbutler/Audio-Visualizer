@@ -20,7 +20,7 @@ audio_helper.o : audio_helper.cpp
 	$(CC) $(INCDIRS) -c audio_helper.cpp
 
 audio_only :
-	$(CC) audio_helper.cpp -o audio_main $(AUDIOLIBS)
+	$(CC) audio_helper.cpp audio_main.cpp -o audio_main $(AUDIOLIBS)
 
 externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 
