@@ -12,16 +12,26 @@ GLFrame bars[PACKET_SIZE];
 
 Packet *sharedBuffer;
 float barWidth = .11;
-int framesCounter = 0;
+int currentFrame;
+
+int getLatestBufferIndex(){
+    int latest = -1;
+    for(int i = 0; i < BUFFER_SIZE; i++){
+        if(sharedBuffer[i].order > latest && sharedBuffer[i].free == 0){
+            if(latest != -1){
+                sharedBuffer[latest].free = 1;
+            }
+            latest = i;
+        }
+    }
+    return latest;
+}
 
 void RenderScene(void){
     static CStopWatch    rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
 
-    if(framesCounter < BUFFER_SIZE - 1)
-        framesCounter++;
-    else
-        framesCounter = 0;
+    currentFrame = getLatestBufferIndex();
 
     static GLfloat vTorusColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -39,7 +49,7 @@ void RenderScene(void){
 
     for(int i = 0; i < PACKET_SIZE; i++){
         modelViewMatrix.PushMatrix();
-        GLfloat y = 5 * fabs(sharedBuffer[framesCounter].samples[i]);
+        GLfloat y = 5 * fabs(sharedBuffer[currentFrame].samples[i]);
         modelViewMatrix.MultMatrix(bars[i]);
         modelViewMatrix.Scale(barWidth, y, .1f);
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
@@ -56,6 +66,9 @@ void RenderScene(void){
 
     glutSwapBuffers();
     glutPostRedisplay();
+
+    if(currentFrame != -1)
+        sharedBuffer[currentFrame].free = 1;
 }
 
 void SpecialKeys(int key, int x, int y){
