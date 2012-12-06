@@ -1,16 +1,27 @@
 #include "graphics_helper.h"
+#include "Visualizer.h"
 
 GLShaderManager shaderManager;
-GLTriangleBatch torusBatch;
+GLBatch cubeBatch;
 GLMatrixStack projectionMatrix;
 GLFrustum viewFrustum;
 GLGeometryTransform transformPipeline;
 GLMatrixStack modelViewMatrix;
 GLFrame cameraFrame;
+GLFrame bars[PACKET_SIZE];
+
+Packet *sharedBuffer;
+float barWidth = .11;
+int framesCounter = 0;
 
 void RenderScene(void){
     static CStopWatch    rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
+
+    if(framesCounter < BUFFER_SIZE - 1)
+        framesCounter++;
+    else
+        framesCounter = 0;
 
     static GLfloat vTorusColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -26,13 +37,18 @@ void RenderScene(void){
     M3DVector4f vLightEyePos;
     m3dTransformVector4(vLightEyePos, vLightPos, mCamera);
 
-    modelViewMatrix.Translate(0.0f, 0.0f, -2.5f);
-    modelViewMatrix.Rotate(yRot, 0.0f, 1.0f, 0.0f);
-    shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
-            transformPipeline.GetModelViewMatrix(),
-            transformPipeline.GetProjectionMatrix(),
-            vLightEyePos, vTorusColor);
-    torusBatch.Draw();
+    for(int i = 0; i < PACKET_SIZE; i++){
+        modelViewMatrix.PushMatrix();
+        GLfloat y = 5 * fabs(sharedBuffer[framesCounter].samples[i]);
+        modelViewMatrix.MultMatrix(bars[i]);
+        modelViewMatrix.Scale(barWidth, y, .1f);
+        shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
+                transformPipeline.GetModelViewMatrix(),
+                transformPipeline.GetProjectionMatrix(),
+                vLightEyePos, vTorusColor);
+        cubeBatch.Draw();
+        modelViewMatrix.PopMatrix();
+    }
     modelViewMatrix.PopMatrix();
 
     modelViewMatrix.PopMatrix();
@@ -40,6 +56,21 @@ void RenderScene(void){
 
     glutSwapBuffers();
     glutPostRedisplay();
+}
+
+void SpecialKeys(int key, int x, int y){
+    float linear = 0.1f;
+    float angular = float(m3dDegToRad(5.0f));
+
+    if(key == GLUT_KEY_UP)
+        cameraFrame.MoveForward(linear);
+    if(key == GLUT_KEY_DOWN)
+        cameraFrame.MoveForward(-linear);
+    if(key == GLUT_KEY_LEFT)
+        cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
+    if(key == GLUT_KEY_RIGHT)
+        cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
+
 }
 
 void ChangeSize(int nWidth, int nHeight){
@@ -54,12 +85,13 @@ void setupGlut(int count, char *values[]){
 
     glutInit(&count, values);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
+    glutInitWindowSize(1200, 400);
 
     glutCreateWindow("Audio Vis");
 
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
+    glutSpecialFunc(SpecialKeys);
 }
 
 void SetupRC(){
@@ -67,5 +99,10 @@ void SetupRC(){
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
-    gltMakeTorus(torusBatch, 0.4f, 0.15f, 30, 30);
+    gltMakeCube(cubeBatch, .1f);
+
+    for(int i = 0; i < PACKET_SIZE; i++){
+        GLfloat x = -(PACKET_SIZE * .5 * barWidth * .2) + i * barWidth * .2;
+        bars[i].SetOrigin(x, 0.0f, -3.0f);
+    }
 }

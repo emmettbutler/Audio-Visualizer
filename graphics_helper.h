@@ -8,6 +8,8 @@
 #define FREEGLUT_STATIC
 #include <GL/glut.h>
 
+#include <cmath>
+
 void RenderScene(void);
 void SpecialKeys(int key, int x, int y);
 void ChangeSize(int nWidth, int nHeight);

@@ -13,7 +13,7 @@
 #include "audio_helper.h"
 #include "Visualizer.h"
 
-Packet *sharedBuffer;
+extern Packet *sharedBuffer;
 
 
 int main(int argc, char *argv[]){
@@ -25,6 +25,15 @@ int main(int argc, char *argv[]){
     if (GLEW_OK != err){
         fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
         return 1;
+    }
+
+    time_t seconds;
+    time(&seconds);
+    srand((unsigned int) seconds);
+    for(int i = 0; i < BUFFER_SIZE; i++){
+        for(int j = 0; j < PACKET_SIZE; j++){
+            sharedBuffer[i].samples[j] = ((rand() % 100) - 50) * .02;
+        }
     }
 
     SetupRC();
