@@ -16,3 +16,5 @@
 # vim files
 .*.swp
 .*.un~
+
+audio_main

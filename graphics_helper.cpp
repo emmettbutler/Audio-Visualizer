@@ -18,9 +18,8 @@ int getLatestBufferIndex(){
     int latest = -1;
     for(int i = 0; i < BUFFER_SIZE; i++){
         if(sharedBuffer[i].order > latest && !sharedBuffer[i].free){
-            if(latest != -1){
+            if(latest != -1)
                 sharedBuffer[latest].free = true;
-            }
             latest = i;
         }
     }
@@ -83,7 +82,6 @@ void SpecialKeys(int key, int x, int y){
         cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
     if(key == GLUT_KEY_RIGHT)
         cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
-
 }
 
 void ChangeSize(int nWidth, int nHeight){
