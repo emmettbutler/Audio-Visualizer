@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
     for(int i = 0; i < BUFFER_SIZE; i++){
         for(int j = 0; j < PACKET_SIZE; j++){
             sharedBuffer[i].samples[j] = ((rand() % 100) - 50) * .02;
-            sharedBuffer[i].free = 0;
+            sharedBuffer[i].free = false;
             sharedBuffer[i].order = i;
         }
     }

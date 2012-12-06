@@ -17,9 +17,9 @@ int currentFrame;
 int getLatestBufferIndex(){
     int latest = -1;
     for(int i = 0; i < BUFFER_SIZE; i++){
-        if(sharedBuffer[i].order > latest && sharedBuffer[i].free == 0){
+        if(sharedBuffer[i].order > latest && !sharedBuffer[i].free){
             if(latest != -1){
-                sharedBuffer[latest].free = 1;
+                sharedBuffer[latest].free = true;
             }
             latest = i;
         }
@@ -68,7 +68,7 @@ void RenderScene(void){
     glutPostRedisplay();
 
     if(currentFrame != -1)
-        sharedBuffer[currentFrame].free = 1;
+        sharedBuffer[currentFrame].free = true;
 }
 
 void SpecialKeys(int key, int x, int y){

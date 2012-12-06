@@ -7,8 +7,8 @@ GRAPHICSLIBS = -lglut
 AUDIOLIBS = -lportaudio -lsndfile
 CC = g++
 
-all: $(MAIN).o graphics_helper.o externals
-	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS) $(AUDIOLIBS) 
+all: $(MAIN).o graphics_helper.o audio_helper.o externals
+	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS) $(AUDIOLIBS)
 
 $(MAIN).o : $(MAIN).cpp
 	$(CC) $(INCDIRS) -c $(MAIN).cpp

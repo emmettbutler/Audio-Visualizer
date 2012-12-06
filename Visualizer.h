@@ -4,5 +4,5 @@
 typedef struct _packet{
     float samples[PACKET_SIZE];  // PACKET_SIZE samples
     bool free;  // is this packet free to overwrite
-    bool order;  // where in the sequence of samples is this packet
+    int order;  // where in the sequence of samples is this packet
 } Packet;
