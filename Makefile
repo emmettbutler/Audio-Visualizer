@@ -3,11 +3,12 @@ SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-LIBS = -lglut -lportaudio
+GRAPHICSLIBS = -lglut
+AUDIOLIBS = -lportaudio -lsndfile
 CC = g++
 
 all: $(MAIN).o graphics_helper.o externals
-	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(LIBS)
+	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS) $(AUDIOLIBS) 
 
 $(MAIN).o : $(MAIN).cpp
 	$(CC) $(INCDIRS) -c $(MAIN).cpp
@@ -17,6 +18,9 @@ graphics_helper.o : graphics_helper.cpp
 
 audio_helper.o : audio_helper.cpp
 	$(CC) $(INCDIRS) -c audio_helper.cpp
+
+audio_only :
+	$(CC) audio_helper.cpp -o audio_main $(AUDIOLIBS)
 
 externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 

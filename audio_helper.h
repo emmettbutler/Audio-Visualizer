@@ -5,4 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-void startAudio();
+typedef struct {
+	SNDFILE *file;
+	SF_INFO info;
+} SF_Container;
+
+bool startAudio(char *filename);
