@@ -1,0 +1,99 @@
+OpenGL Audio vis
+Emmett Butler and David Coss
+Realtime 3D visualization of audio streams
+
+Overview
+--------
+This software should allow an incoming audio stream to provide data to
+a graphics rendering engine in such a way that neither of the two systems
+block each other, regardless of the rate at which they're running. This
+requires the use of threads, but luckily both portaudio and glut already
+implement their functionality using threads. Therefore, we can implement
+a shared buffer written to by the audio stream and read from by the graphics
+stream. This design constitutes the main challenge of the project, since the
+graphics rendering and audio processing are both fairly formulaic.
+
+Modules
+-------
+The visualizer will consist of two main modules connected via a shared buffer:
+the audio streamer and the graphics renderer. The audio streaming module will
+be responsible for streaming an audio file, conditioning its contents to
+prepare them for the graphics module, and placing them into the shared memory
+space to which the grahpics module has access.
+
+The graphics module will read data from the shared memory and render graphics
+based on this data. The data in the shared memory will represent sample
+amplitudes streamed from the audio file, and the graphics renderer will create
+a series of 3d rectangles of heights proportional to the amplitude of each
+sample.
+
+The shared buffer
+-----------------
+The memory region shared by the audio and video modules should be an array of
+structures, declared as extern to allow access across files. It should contain
+an arbitrarily large number of these structures to improve the performance of
+the interaction between the two modules. The structures it contains should
+have three members: a float array to hold sample amplitudes, a boolean flag
+representing "free" state, and an "order" integer that denotes the order in
+which a given packet was placed into the buffer.
+
+The interaction with the shared buffer should be as follows:
+The audio module should, upon reading some number of samples, condense them
+into a power of two number of amplitude values. It should then search for
+a packet slot marked as "free" in the buffer and place these values into that
+slot. After the insertion, it should mark the slot as "not free", indicating
+to the video renderer that the slot contains valid, unused data.
+
+The video renderer should, upon each frame of video, search the buffer for the
+most recently added packet, render a frame of video based on the packet's
+data, and then mark the packet and all preceding packets as "free". It is
+important to use the latest packet instead of the earliest, since the video
+renderer will be running at a much slower rate than the audio streamer (60 Hz
+vs 44100 Hz). It is also quite important that each component mark the packets
+as free or not free at the appropriate times; doing otherwise would result in
+packet loss.
+
+pseudocode for audio
+
+while data remains in file:
+    read x samples of audio data
+    search buffer for free slot
+    copy x samples into buffer slot
+    mark slot as not free
+
+pseudocode for video
+
+while there is a not free buffer slot:
+    find the highest-ordered not free slot
+    render a frame based on that data
+    mark slot as free
+
+Despite the vastly different framerates of the audio and video modules, this
+shared buffer strategy will ensure that neither one blocks the execution of
+the other.
+
+Video specifics
+---------------
+The video rendering step will involve pulling a packet from the buffer and
+rendering a scene based on it. It will use OpenGL to build a row of
+rectangular prisms whose heights correspond to the amplitudes of the samples
+in the buffer packet. This is accomplished using a glut library function that
+creates a set of vertices defining a cube, then applying transformation
+matrices and using a built-in GLTools shader to draw the cubes. The cubes
+should be kept in discrete positions using an array of GLFrames, each of which
+hold an "up" vector, a "forward" vector, and an origin point. Using this
+information, each prism's position can be resolved to a point on the cartesian
+plane.
+
+Additionally, the video renderer will implement a function that allows the
+user to use the arrow keys to navigate through the 3d environment, rotating
+around the 3d waveform.
+
+Audio specifics
+---------------
+The audio server will be responsible for placing single "screens" of
+renderable sample data into the buffer. It will have to condense the entirety
+of the streamed data into packets that are consumable by the graphics client.
+It may also perform some preprocessing on the data, including averaging of
+values to lessen the time-resolution of waveform data passed to the client.
+
