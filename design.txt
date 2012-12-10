@@ -97,3 +97,10 @@ of the streamed data into packets that are consumable by the graphics client.
 It may also perform some preprocessing on the data, including averaging of
 values to lessen the time-resolution of waveform data passed to the client.
 
+The audio server will use a separate module for several helper functions, mainly
+to facilitate starting and closing the Portaudio stream, but also to perform
+signal processing such as FFT analysis. However, the audio code will share the
+same main function with the graphics portion. It will use the Pa callback
+function to send samples both to the output buffer and to the shared buffer. Any
+signal processing functions will also be called from Pa callback; a secondary
+shared buffer may be used for frequency-domain signals.
