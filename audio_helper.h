@@ -11,3 +11,4 @@ typedef struct {
 } SF_Container;
 
 bool startAudio(char *filename);
+void endAudio(SF_Container sf);
