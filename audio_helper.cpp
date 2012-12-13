@@ -1,11 +1,18 @@
 #include "audio_helper.h"
 
-bool startAudio(char *filename){
+PaStreamParameters getOutputParams(){
 	PaStream *stream;
 	PaStreamParameters outputParams;
 	PaError error;
 
     Pa_Initialize();
+    outputParams.device = Pa_GetDefaultOutputDevice();
+	outputParams.channelCount = CHANNELS;
+	outputParams.sampleFormat = paFloat32;
+	outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
+	outputParams.hostApiSpecificStreamInfo = NULL;
+
+	// error = Pa_OpenStream(&stream, NULL, &outputParams, SAMPLE_RATE, BUFFER, paNoFlag, paCallback, &data);
 
 	/*SF_Container infile;
 
@@ -15,9 +22,5 @@ bool startAudio(char *filename){
 		return 0;
 	}*/
 
-	return 1;
-}
-
-void endAudio(SF_Container sf){
-	sf_close(sf.file);
+	return outputParams;
 }

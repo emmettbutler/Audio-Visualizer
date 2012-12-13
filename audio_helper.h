@@ -5,10 +5,15 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define CHANNELS 2
+#define SAMPLE_RATE 48000
+#define BUFFER 256
+
 typedef struct {
 	SNDFILE *file;
 	SF_INFO info;
 } SF_Container;
 
-bool startAudio(char *filename);
-void endAudio(SF_Container sf);
+bool startAudio();
+PaStreamParameters getOutputParams();
+void endAudio();

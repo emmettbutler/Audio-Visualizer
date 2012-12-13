@@ -2,6 +2,6 @@
 
 int main(){
 
-	startAudio("test.wav");	
+	PaStreamParameters outputParams = getOutputParams();
 	return 0;
 }
