@@ -14,7 +14,7 @@ Packet *sharedBuffer;
 float barWidth = .11;
 int currentFrame;
 int prevMouse[2];
-GLfloat rotation = 0.0;
+float rot = 0.0;
 
 int getLatestBufferIndex(){
     int latest = -1;
@@ -32,7 +32,7 @@ int getLatestBufferIndex(){
 void RenderScene(void){
     static CStopWatch    rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
-    rotation += 1.0;
+    rot += 1.0;
 
     currentFrame = getLatestBufferIndex();
 
@@ -46,10 +46,11 @@ void RenderScene(void){
     cameraFrame.GetCameraMatrix(mCamera);
     modelViewMatrix.PushMatrix(mCamera);
 
+    //cameraFrame.TranslateWorld(.7 * sin(rot * .01), 0.0f, .7 * cos(rot * .01));
+
     M3DVector4f vLightPos = { 0.0f, 10.0f, 5.0f, 1.0f };
     M3DVector4f vLightEyePos;
     m3dTransformVector4(vLightEyePos, vLightPos, mCamera);
-
 
     for(int i = 0; i < PACKET_SIZE; i++){
         modelViewMatrix.PushMatrix();
@@ -99,19 +100,6 @@ void ChangeSize(int nWidth, int nHeight){
 
 void mouseFunc(int x, int y){
     float angular = float(m3dDegToRad(2.0f));
-
-    if(prevMouse[0] && prevMouse[0] < x){
-        cameraFrame.TranslateWorld(0.1f, 0.0f, 0.0f);
-    }
-    else if(prevMouse[0] && prevMouse[0] > x){
-        cameraFrame.TranslateWorld(-0.1f, 0.0f, 0.0f);
-    }
-    if(prevMouse[1] && prevMouse[1] < y){
-        cameraFrame.TranslateWorld(0.0f, 0.0f, 0.1f);
-    }
-    else if(prevMouse[1] && prevMouse[1] > y){
-        cameraFrame.TranslateWorld(0.0f, 0.0f, -0.1f);
-    }
 
     prevMouse[0] = x;
     prevMouse[1] = y;
