@@ -33,7 +33,7 @@ void RenderScene(void){
 
     currentFrame = getLatestBufferIndex();
 
-    static GLfloat vTorusColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    static GLfloat vBarColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -55,7 +55,7 @@ void RenderScene(void){
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                 transformPipeline.GetModelViewMatrix(),
                 transformPipeline.GetProjectionMatrix(),
-                vLightEyePos, vTorusColor);
+                vLightEyePos, vBarColor);
         cubeBatch.Draw();
         modelViewMatrix.PopMatrix();
     }
