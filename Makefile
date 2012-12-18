@@ -4,7 +4,7 @@ SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
 GRAPHICSLIBS = -lglut -lGL
-AUDIOLIBS = -lportaudio -lsndfile -lrt
+AUDIOLIBS = -lportaudio -lsndfile -lrt -ljack -lasound
 CC = g++ -g
 
 all: $(MAIN).o graphics_helper.o audio_helper.o externals
