@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./Visualizer 2>>/dev/null
