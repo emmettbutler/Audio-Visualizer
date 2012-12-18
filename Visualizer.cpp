@@ -16,7 +16,7 @@
 extern Packet *sharedBuffer;
 
 /*callback by David Coss*/
-static int paCallback( const void *inputBuffer,
+/*static int paCallback( const void *inputBuffer,
     void *outputBuffer,
     unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
@@ -48,13 +48,13 @@ static int paCallback( const void *inputBuffer,
     sharedBuffer[bufferIndex].free = false;
 
     return paContinue;
-}
+}*/
 
 int main(int argc, char *argv[]){
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
     PaStream *stream;
-    if (!startAudio(&stream, paCallback, &sharedBuffer)) return 1;
+    if (!startAudio(&stream, &sharedBuffer)) return 1;
 
     setupGlut(argc, argv);
 

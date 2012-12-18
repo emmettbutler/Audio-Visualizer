@@ -19,13 +19,6 @@ typedef struct {
 PaStreamParameters getOutputParams();
 bool printError(PaError error, string msg);
 
-bool startAudio(PaStream *stream, int (*paCallback)(
-    const void *inputBuffer,
-    void *outputBuffer,
-    unsigned long framesPerBuffer,
-    const PaStreamCallbackTimeInfo* timeInfo,
-    PaStreamCallbackFlags statusFlags,
-    void *userData),
-void *userData);
+bool startAudio(PaStream *stream, void *userData);
 
 void endAudio(PaStream *stream);

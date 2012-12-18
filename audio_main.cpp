@@ -11,6 +11,8 @@ static int paCallback( const void *inputBuffer,
 int main(){
 
 	PaStream *stream;
-	startAudio(&stream, paCallback, NULL);
+	startAudio(&stream, NULL);
+
+	sleep(3);
 	return 0;
 }
