@@ -67,8 +67,9 @@ void RenderScene(void){
     glutSwapBuffers();
     glutPostRedisplay();
 
-    if(currentFrame != -1)
+    if(currentFrame != -1){
         sharedBuffer[currentFrame].free = true;
+    }
 }
 
 void SpecialKeys(int key, int x, int y){

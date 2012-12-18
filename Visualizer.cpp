@@ -16,11 +16,11 @@
 extern Packet *sharedBuffer;
 
 /*callback by David Coss*/
-static int paCallback( const void *inputBuffer, 
+static int paCallback( const void *inputBuffer,
     void *outputBuffer,
     unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
-    PaStreamCallbackFlags statusFlags, 
+    PaStreamCallbackFlags statusFlags,
     void *userData)
 {
     int i, j, bufferIndex;
@@ -33,19 +33,19 @@ static int paCallback( const void *inputBuffer,
         //if we're on the last packet and none are free, return
         else if (i>=BUFFER_SIZE) return paContinue;
     }
-    //set free to false so packet won't be overwritten
-    sharedBuffer[bufferIndex].free = false;
     //set and increment order
-    sharedBuffer[bufferIndex].order = order;
-    order++;
+    sharedBuffer[bufferIndex].order = order++;
 
-    //fill buffer with shit
+    // fill buffer with noise
+    // this needs to be replaced with actual audio waveform data
     for (i=0; i<framesPerBuffer; i++){
         for (j=0; j<PAC_CHANNELS; j++){
             sharedBuffer[bufferIndex].frames[i][j] = ((rand() % 100) - 50) * .02;
         }
     }
-    sharedBuffer[bufferIndex].free = true;
+    // mark as not free once filling is complete
+    // ie "ready to go!"
+    sharedBuffer[bufferIndex].free = false;
 
     return paContinue;
 }
