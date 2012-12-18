@@ -19,7 +19,7 @@ int getLatestBufferIndex(){
     for(int i = 0; i < BUFFER_SIZE; i++){
         if(sharedBuffer[i].order > latest && !sharedBuffer[i].free){
             if(latest != -1){
-//                sharedBuffer[latest].free = true;
+                sharedBuffer[latest].free = true;
             }
             latest = i;
         }
@@ -49,7 +49,7 @@ void RenderScene(void){
 
     for(int i = 0; i < PACKET_SIZE; i++){
         modelViewMatrix.PushMatrix();
-        GLfloat y = 5 * fabs(sharedBuffer[currentFrame].samples[i]);
+        GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
         modelViewMatrix.MultMatrix(bars[i]);
         modelViewMatrix.Scale(barWidth, y, .1f);
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
@@ -67,8 +67,9 @@ void RenderScene(void){
     glutSwapBuffers();
     glutPostRedisplay();
 
-    if(currentFrame != -1)
+    if(currentFrame != -1){
         sharedBuffer[currentFrame].free = true;
+    }
 }
 
 void SpecialKeys(int key, int x, int y){
