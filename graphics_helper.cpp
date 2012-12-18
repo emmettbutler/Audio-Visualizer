@@ -13,6 +13,7 @@ GLFrame bars[PACKET_SIZE];
 Packet *sharedBuffer;
 float barWidth = .11;
 int currentFrame;
+int prevMouse[2];
 
 int getLatestBufferIndex(){
     int latest = -1;
@@ -93,6 +94,26 @@ void ChangeSize(int nWidth, int nHeight){
     transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 }
 
+void mouseFunc(int x, int y){
+    float angular = float(m3dDegToRad(2.0f));
+
+    if(prevMouse[0] && prevMouse[0] < x){
+        cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
+    }
+    else if(prevMouse[0] && prevMouse[0] > x){
+        cameraFrame.RotateWorld(angular, 0.0f, 1.0f, 0.0f);
+    }
+    if(prevMouse[1] && prevMouse[1] < y){
+        cameraFrame.RotateWorld(-angular, 1.0f, 0.0f, 0.0f);
+    }
+    else if(prevMouse[1] && prevMouse[1] > y){
+        cameraFrame.RotateWorld(angular, 1.0f, 0.0f, 0.0f);
+    }
+
+    prevMouse[0] = x;
+    prevMouse[1] = y;
+}
+
 void setupGlut(int count, char *values[]){
     gltSetWorkingDirectory(values[0]);
 
@@ -105,6 +126,7 @@ void setupGlut(int count, char *values[]){
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
+    glutPassiveMotionFunc(mouseFunc);
 }
 
 void SetupRC(){
