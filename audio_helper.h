@@ -12,20 +12,20 @@
 using namespace std;
 
 typedef struct {
-	SNDFILE *file;
-	SF_INFO info;
+    SNDFILE *file;
+    SF_INFO info;
 } SF_Container;
 
 PaStreamParameters getOutputParams();
 bool printError(PaError error, string msg);
 
 bool startAudio(PaStream *stream, int (*paCallback)(
-	const void *inputBuffer, 
-	void *outputBuffer,
-	unsigned long framesPerBuffer,
-	const PaStreamCallbackTimeInfo* timeInfo,
-	PaStreamCallbackFlags statusFlags, 
-	void *userData), 
+    const void *inputBuffer,
+    void *outputBuffer,
+    unsigned long framesPerBuffer,
+    const PaStreamCallbackTimeInfo* timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void *userData),
 void *userData);
 
 void endAudio(PaStream *stream);

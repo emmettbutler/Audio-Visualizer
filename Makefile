@@ -4,11 +4,11 @@ SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
 GRAPHICSLIBS = -lglut -lGL
-AUDIOLIBS = -lportaudio -lsndfile
-CC = g++
+AUDIOLIBS = -lportaudio -lsndfile -lrt
+CC = g++ -g
 
 all: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CC) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS) $(AUDIOLIBS)
+	$(CC) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o libportaudio.a $(GRAPHICSLIBS) $(AUDIOLIBS)
 
 $(MAIN).o : $(MAIN).cpp
 	$(CC) $(INCDIRS) -c $(MAIN).cpp
@@ -17,7 +17,7 @@ graphics_helper.o : graphics_helper.cpp
 	$(CC) $(INCDIRS) -c graphics_helper.cpp
 
 audio_helper.o : audio_helper.cpp
-	$(CC) $(INCDIRS) -c audio_helper.cpp
+	$(CC) -c audio_helper.cpp
 
 audio_only :
 	$(CC) audio_helper.cpp audio_main.cpp -o audio_main $(AUDIOLIBS)
