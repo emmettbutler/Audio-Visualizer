@@ -3,7 +3,7 @@ SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-GRAPHICSLIBS = -lglut
+GRAPHICSLIBS = -lglut -lGL
 AUDIOLIBS = -lportaudio -lsndfile
 CC = g++
 
