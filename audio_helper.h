@@ -5,15 +5,27 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define CHANNELS 2
+#define OUT_CHANNELS 2
 #define SAMPLE_RATE 48000
 #define BUFFER 256
+
+using namespace std;
 
 typedef struct {
 	SNDFILE *file;
 	SF_INFO info;
 } SF_Container;
 
-bool startAudio();
 PaStreamParameters getOutputParams();
-void endAudio();
+bool printError(PaError error, string msg);
+
+bool startAudio(PaStream *stream, int (*paCallback)(
+	const void *inputBuffer, 
+	void *outputBuffer,
+	unsigned long framesPerBuffer,
+	const PaStreamCallbackTimeInfo* timeInfo,
+	PaStreamCallbackFlags statusFlags, 
+	void *userData), 
+void *userData);
+
+void endAudio(PaStream *stream);
