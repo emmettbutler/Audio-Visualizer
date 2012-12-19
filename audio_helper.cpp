@@ -33,7 +33,7 @@ static int paCallback( const void *inputBuffer,
     int i, j, bufferIndex;
 
     float *out = (float*) outputBuffer, sample/*, fileBuffer[sf->info.channels*framesPerBuffer]*/;
-    float fileBuffer[framesPerBuffer*2];
+    float fileBuffer[framesPerBuffer*PAC_CHANNELS];
     static int order = 0;
 
     //search through the shared buffer for free packet
@@ -50,7 +50,7 @@ static int paCallback( const void *inputBuffer,
 
     //get samples from sound file
     sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
-    //fill buffer with shit
+    //fill buffer with samples from sound file
     for (i=0; i<framesPerBuffer; i++){
 
 		for (j=0; j<PAC_CHANNELS; j++){

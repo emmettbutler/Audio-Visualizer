@@ -8,6 +8,8 @@
 #define OUT_CHANNELS 2
 #define SAMPLE_RATE 48000
 #define BUFFER 256
+#define STEREO 2
+
 #define PI 3.14159265358979323846264338327950288
 
 using namespace std;
