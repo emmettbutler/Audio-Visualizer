@@ -23,11 +23,20 @@
 
 <h3>Usage</h3>
 <pre>
-Visualizer &lt;soundfile&gt; [windowtype]
-     -d file   : data filename
-     -i file   : input filename
-     -o file   : output filename
+	Visualizer &lt;soundfile&gt; -w windowtype -r -c
+		soundfile : the file to be played
+		-w : the windowing function for the waveform (see below)
+		-r : enable mouse rotation
+		-c : enable flashing colours
 </pre>
+<p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include:
+<ul>
+   <li>WAV
+   <li>AIFF
+   <li>FLAC
+</ul>
+<p>For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
+<p><b>
 
 <h3>API</h3>
 
