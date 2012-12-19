@@ -2,6 +2,7 @@
 
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include <string.h>
 #include <fftw3.h>
 
 extern Packet *sharedBuffer;
