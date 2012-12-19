@@ -14,6 +14,7 @@
 #include "Visualizer.h"
 
 extern Packet *sharedBuffer;
+extern bool finished;
 
 int main(int argc, char *argv[]){
     if(argc < 2){
