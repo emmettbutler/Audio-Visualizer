@@ -5,8 +5,13 @@
 #include <GLMatrixStack.h>
 #include <GLGeometryTransform.h>
 #include <StopWatch.h>
+
+#ifdef __APPLE__
+#include <glut/glut.h>
+#else
 #define FREEGLUT_STATIC
 #include <GLUT/glut.h>
+#endif
 
 #include <cmath>
 
