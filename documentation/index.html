@@ -15,20 +15,30 @@
 
 <!--Do not edit anything above this-->
 
-<h1>Title of My Project (This is an h1 header)</h1>
-<h2>Author(s) of Project (This is an h2 header)</h2>
+<h1>3D Sound Visualizer</h1>
+<h2>Emmett Butler and David Coss</h2>
 
+<h3>Summary</h3>
+<p>This is a 3D visualizer for audio files. 
 
-<h3>This is an h3 header</h3>
+<h3>Usage</h3>
+<pre>
+	Visualizer &lt;soundfile&gt; -w windowtype -r -c
+		soundfile : the file to be played
+		-w : the windowing function for the waveform (see below)
+		-r : enable mouse rotation
+		-c : enable flashing colours
+</pre>
+<p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include:
+<ul>
+   <li>WAV
+   <li>AIFF
+   <li>FLAC
+</ul>
+<p>For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
+<p><b>
 
-<p>This is a bunch of text documenting your final project. It is a user’s manual for 
-your application. Although the structure of your documentation is entirely up to you, 
-it should be incredibly clear to the instructor how your project is to be installed, 
-how it can be configured, and how it can be used. Your documentation should be at 
-least several paragraphs in length, if not several pages. It should not be necessary 
-for us to contact you with questions regarding your project after its submission. 
-Be sure to answer in your documentation any questions you think we might have while 
-testing your work.
+<h3>API</h3>
 
 <p>This is a test link:
 <a href="http://www.nyu.edu/projects/farbood/2618">C Programming Class Website</a>
@@ -49,15 +59,6 @@ testing your work.
 
 <p>This is a test image:<br>
 <img src="images/test.gif"></img>
-
-<p>This is preformatted text:
-<pre>
-process.exe -d filename -i filename -o filename
-     -d file   : data filename
-     -i file   : input filename
-     -o file   : output filename
-</pre>
-
 
 <!--Don't edit anything below here-->
 </div>
