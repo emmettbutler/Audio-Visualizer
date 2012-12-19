@@ -6,6 +6,7 @@
 
 extern Packet *sharedBuffer;
 SF_Container sf;
+WindowType wt;
 
 //initialize PA; return a PaStreamParameters for use with startAudio()
 PaStreamParameters getOutputParams(){
@@ -54,9 +55,14 @@ static int paCallback( const void *inputBuffer,
     for (i=0; i<framesPerBuffer; i++){
 
 		for (j=0; j<PAC_CHANNELS; j++){
-			//sample = ((rand() % 100) - 50) * .02;
+			//send sample to output buffer
 			sample = fileBuffer[2*i+j];
 			out[2*i + j] = sample;
+
+			//window and send sample to shared buffer
+			if (wt != Rect){
+				sample = window(sample, i, framesPerBuffer, wt);
+			}
 			sharedBuffer[bufferIndex].frames[i][j] = sample;
 		}
 	}
@@ -73,17 +79,25 @@ bool printError(PaError error, string msg){
 }
 
 //open and start the audio stream - takes stream, callback function, and userdata
-bool startAudio(PaStream *stream, const char* filename){
+bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 
 	//open file
 	if ((sf.file = sf_open(filename, SFM_READ, &sf.info ) ) == NULL ) {
 		printf("Error opening file\n");
-		return EXIT_FAILURE;
+		return 1;
 	}
 
 	//port audio stuff
 	PaStreamParameters outputParams = getOutputParams();
 	PaError error;
+
+	//get window type
+	WindowType windowType;
+	if (windowname == "hann") windowType = Hann;
+	else if (windowname == "hamming") windowType = Hamming;
+	else windowType = Rect;
+
+	wt = windowType;
 
 	error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
 	if (! printError(error, "PortAudio error - open stream: ")) return false;

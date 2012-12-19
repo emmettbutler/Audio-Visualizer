@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 	}*/
 
 	//cout << infile.info.channels;
-	startAudio(&stream, argv[1]);
+	startAudio(&stream, argv[1], "");
 
 	sleep(5);
 

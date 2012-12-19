@@ -21,13 +21,15 @@ int main(int argc, char *argv[]){
 
     //sound initialization by David Coss
     PaStream *stream;
-    SF_Container infile;
 
-    if ( argc != 2 ) {
-        cout << "Usage: " << argv[0] << " <soundfile>" << endl;
+    if ( argc < 2 || argc > 3) {
+        //cout << "Usage: " << argv[0] << " <soundfile>" << endl;
+        printf("Usage: %s <soundfile> [windowtype]", argv[1]);
         return EXIT_FAILURE;
     }
 
+    //set windowName if arg is specified
+    char[] windowName = (argc == 3) ? argv[2] : "";
     //start audio
     if (!startAudio(&stream, argv[1])) return 1;
 
