@@ -21,7 +21,7 @@ int getLatestBufferIndex(){
     for(int i = 0; i < BUFFER_SIZE; i++){
         if(sharedBuffer[i].order > latest && !sharedBuffer[i].free){
             if(latest != -1){
-//                sharedBuffer[latest].free = true;
+                sharedBuffer[latest].free = true;
             }
             latest = i;
         }
@@ -32,7 +32,6 @@ int getLatestBufferIndex(){
 void RenderScene(void){
     static CStopWatch    rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
-    rot += 1.0;
 
     currentFrame = getLatestBufferIndex();
 
@@ -45,8 +44,6 @@ void RenderScene(void){
     M3DMatrix44f mCamera;
     cameraFrame.GetCameraMatrix(mCamera);
     modelViewMatrix.PushMatrix(mCamera);
-
-    //cameraFrame.TranslateWorld(.7 * sin(rot * .01), 0.0f, .7 * cos(rot * .01));
 
     M3DVector4f vLightPos = { 0.0f, 10.0f, 5.0f, 1.0f };
     M3DVector4f vLightEyePos;
