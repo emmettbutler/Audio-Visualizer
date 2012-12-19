@@ -26,9 +26,9 @@ int main(int argc, char *argv[]){
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
     //set windowName if arg is specified
-    char windowName[] = (argc == 3) ? argv[2] : "";
+    const char *windowName = (argc == 3) ? argv[2] : "";
     //start audio
-    if (!startAudio(stream, argv[1])){
+    if (!startAudio(stream, argv[1], windowName)){
         exit(1);
     }
 

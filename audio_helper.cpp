@@ -80,12 +80,15 @@ bool printError(PaError error, string msg){
 
 //open and start the audio stream - takes stream, callback function, and userdata
 bool startAudio(PaStream *stream, const char* filename, const char* windowname){
-
     //open file
-    if ((sf.file = sf_open(filename, SFM_READ, &sf.info ) ) == NULL ) {
+    if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
         printf("Error opening file\n");
-        return 1;
+        return EXIT_FAILURE;
     }
+
+    //port audio stuff
+    PaStreamParameters outputParams = getOutputParams();
+    PaError error;
 
     error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
     if (! printError(error, "PortAudio error - open stream: ")) return false;
@@ -121,7 +124,6 @@ void endAudio(PaStream *stream, void *userData){
 //various window functions that take and return one sample
 //(meant to be used iteratively)
 float window(float sample, int index, int width, WindowType windowType){
-<<<<<<< HEAD
     switch (windowType){
         case Hann:
             sample *= .5 * (1 - cos((2*PI*index) / (width - 1)));
