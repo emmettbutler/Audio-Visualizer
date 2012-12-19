@@ -14,33 +14,30 @@
 #include "Visualizer.h"
 
 extern Packet *sharedBuffer;
-using namespace std;
 
 int main(int argc, char *argv[]){
-    sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
-
+    if(argc < 2){
+        printf("Usage: %s <soundfile>\n", argv[0]);
+        exit(1);
+    }
     //sound initialization by David Coss
     PaStream *stream;
 
-    if ( argc < 2 || argc > 3) {
-        //cout << "Usage: " << argv[0] << " <soundfile>" << endl;
-        printf("Usage: %s <soundfile> [windowtype]", argv[1]);
-        return EXIT_FAILURE;
-    }
+    sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
     //set windowName if arg is specified
     char windowName[] = (argc == 3) ? argv[2] : "";
     //start audio
-    if (!startAudio(&stream, argv[1])) return 1;
-
-    //GL functions by Emmett Butler
+    if (!startAudio(stream, argv[1])){
+        exit(1);
+    }
 
     setupGlut(argc, argv);
 
     GLenum err = glewInit();
     if (GLEW_OK != err){
         fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
-        return 1;
+        exit(1);
     }
 
     SetupRC();
@@ -48,5 +45,5 @@ int main(int argc, char *argv[]){
 
     free(sharedBuffer);
     endAudio(stream, NULL);
-    return 0;
+    exit(0);
 }

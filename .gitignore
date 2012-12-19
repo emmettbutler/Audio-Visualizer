@@ -20,3 +20,4 @@
 # test files
 
 audio_main
+*.dSYM

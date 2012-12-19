@@ -20,10 +20,10 @@ typedef struct {
 } SF_Container;
 
 typedef enum _WindowType {
-	Rect,
-	Hamming,
-	Hann,
-	Cosine
+    Rect,
+    Hamming,
+    Hann,
+    Cosine
 } WindowType;
 
 PaStreamParameters getOutputParams();
