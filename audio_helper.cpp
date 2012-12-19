@@ -75,9 +75,9 @@ static int paCallback( const void *inputBuffer,
 
     //if we've reached the end of the file, end callback
     if (readcount < framesPerBuffer){
-    	finished = true;
-	    return paComplete;
-	}
+        finished = true;
+        return paComplete;
+    }
 
     //else continue
     return paContinue;
@@ -98,8 +98,8 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
         return false;
     }
     if (sf.info.channels != MONO && sf.info.channels != STEREO){
-    	printf("Error: file must be stereo or mono");
-    	return false;
+        printf("Error: file must be stereo or mono");
+        return false;
     }
 
     //port audio stuff
@@ -114,7 +114,10 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
     if (!strcasecmp(windowname, "hann")) windowType = Hann;
     else if (!strcasecmp(windowname, "hamming")) windowType = Hamming;
     else if (!strcasecmp(windowname, "cosine")) windowType = Cosine;
-    else windowType = Rect;
+    else{
+        printf("Unknown window type argument '%s'\n", windowname);
+        windowType = Rect;
+    }
 
     wt = windowType;
 

@@ -18,10 +18,14 @@ bool flashColors = false;
 bool mouseRotate = false;
 extern bool finished;
 
+void printUsage(const char *name){
+    printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-r]\n", name);
+    exit(1);
+}
+
 int main(int argc, char *argv[]){
     if(argc < 2){
-        printf("Usage: %s <soundfile> [windowtype]\n", argv[0]);
-        exit(1);
+        printUsage(argv[0]);
     }
     //sound initialization by David Coss
     PaStream *stream;
@@ -39,6 +43,9 @@ int main(int argc, char *argv[]){
             mouseRotate = true;
         }
         if(strcasecmp("-w", argv[i]) == 0){
+            if(i + 1 == argc){
+                printUsage(argv[0]);
+            }
             windowName = argv[i+1];
         }
     }
@@ -48,7 +55,6 @@ int main(int argc, char *argv[]){
     if (!startAudio(stream, argv[1], windowName)){
         exit(1);
     }
-
 
     setupGlut(argc, argv);
 
