@@ -14,12 +14,29 @@
 #include "Visualizer.h"
 
 extern Packet *sharedBuffer;
+using namespace std;
 
 int main(int argc, char *argv[]){
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
+    //sound initialization by David Coss
     PaStream *stream;
-    if (!startAudio(&stream, &sharedBuffer)) return 1;
+    SF_Container infile;
+
+    if ( argc != 2 ) {
+        cout << "Usage: " << argv[0] << " <soundfile>" << endl
+        return EXIT_FAILURE;
+    }
+
+    //open file
+    /*if ((infile.file = sf_open(argv[1], SFM_READ, &infile.info ) ) == NULL ) {
+        cout << "Error opening file - see mega-nerd.com/libsndfile/ for accepted formats" << endl;
+        return EXIT_FAILURE;
+    }*/
+    //start audio
+    if (!startAudio(&stream, argv[1])) return 1;
+
+    //GL functions by Emmett Butler
 
     setupGlut(argc, argv);
 

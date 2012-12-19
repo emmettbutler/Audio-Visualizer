@@ -19,6 +19,5 @@ typedef struct {
 PaStreamParameters getOutputParams();
 bool printError(PaError error, string msg);
 
-bool startAudio(PaStream *stream, void *userData);
-
-void endAudio(PaStream *stream);
+bool startAudio(PaStream *stream, const char* filename);
+void endAudio(PaStream *stream, void *userData);

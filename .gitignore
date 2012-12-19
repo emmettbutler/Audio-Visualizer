@@ -17,4 +17,7 @@
 .*.swp
 .*.un~
 
+# test files
+*.wav
+
 audio_main

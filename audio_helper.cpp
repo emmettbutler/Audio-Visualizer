@@ -2,8 +2,10 @@
 
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include <fftw3.h>
 
-extern Packet *sharedBuffer;
+// extern Packet *sharedBuffer;
+SF_Container sf;
 
 //initialize PA; return a PaStreamParameters for use with startAudio()
 PaStreamParameters getOutputParams(){
@@ -17,15 +19,8 @@ PaStreamParameters getOutputParams(){
     outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
     outputParams.hostApiSpecificStreamInfo = NULL;
 
-    /*SF_Container infile;
 
-    infile.file = sf_open(filename, SFM_READ, &infile.info);
-    if (!(infile.file)){
-        printf("ERROR: could not open file\n");
-        return 0;
-    }*/
-
-    return outputParams;
+	return outputParams;
 }
 
 static int paCallback( const void *inputBuffer,
@@ -35,9 +30,10 @@ static int paCallback( const void *inputBuffer,
     PaStreamCallbackFlags statusFlags,
     void *userData)
 {
-    // Packet *sharedBuffer = (Packet*) userData;
     int i, j, bufferIndex;
-    float *out = (float*) outputBuffer, sample;
+
+    float *out = (float*) outputBuffer, sample/*, fileBuffer[sf->info.channels*framesPerBuffer]*/;
+    float fileBuffer[framesPerBuffer*2];
     static int order = 0;
 
     //search through the shared buffer for free packet
@@ -52,14 +48,18 @@ static int paCallback( const void *inputBuffer,
     sharedBuffer[bufferIndex].order = order;
     order++;
 
+    //get samples from sound file
+    sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
     //fill buffer with shit
     for (i=0; i<framesPerBuffer; i++){
-        for (j=0; j<PAC_CHANNELS; j++){
-            sample = ((rand() % 100) - 50) * .02;
-            out[2*i + j] = sample;
-            sharedBuffer[bufferIndex].frames[i][j] = sample;
-        }
-    }
+
+		for (j=0; j<PAC_CHANNELS; j++){
+			//sample = ((rand() % 100) - 50) * .02;
+			sample = fileBuffer[2*i+j];
+			out[2*i + j] = sample;
+			sharedBuffer[bufferIndex].frames[i][j] = sample;
+		}
+	}
     sharedBuffer[bufferIndex].free = false;
 
     return paContinue;
@@ -73,22 +73,33 @@ bool printError(PaError error, string msg){
 }
 
 //open and start the audio stream - takes stream, callback function, and userdata
-bool startAudio(PaStream *stream, void *userData){
+bool startAudio(PaStream *stream, const char* filename){
 
-    PaStreamParameters outputParams = getOutputParams();
-    PaError error;
+	//open file
+	if ((sf.file = sf_open(filename, SFM_READ, &sf.info ) ) == NULL ) {
+		printf("Error opening file\n");
+		return EXIT_FAILURE;
+	}
 
-    error = Pa_OpenStream(&stream, NULL, &outputParams, SAMPLE_RATE, BUFFER, paNoFlag, paCallback, &userData);
-    if (! printError(error, "PortAudio error - open stream: ")) return false;
+	//port audio stuff
+	PaStreamParameters outputParams = getOutputParams();
+	PaError error;
 
-    error = Pa_StartStream(stream);
-    if (! printError(error, "PortAudio error - start stream: ")) return false;
+	error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
+	if (! printError(error, "PortAudio error - open stream: ")) return false;
+	
+	error = Pa_StartStream(stream);
+	if (! printError(error, "PortAudio error - start stream: ")) return false;
 
     return true;
 }
 
-void endAudio(PaStream *stream){
-    Pa_StopStream(stream);
-    Pa_CloseStream(stream);
-    Pa_Terminate();
+void endAudio(PaStream *stream, void *userData){
+	//SF_Container *sf = (SF_Container*) userData;
+
+	Pa_StopStream(stream);
+	Pa_CloseStream(stream);
+	Pa_Terminate();
+
+	sf_close( sf.file );
 }
