@@ -16,34 +16,34 @@
 extern Packet *sharedBuffer;
 
 int main(int argc, char *argv[]){
+    if(argc < 2){
+        printf("Usage: %s <soundfile>\n", argv[0]);
+        exit(1);
+    }
+    //sound initialization by David Coss
+    PaStream *stream;
+
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
-    PaStream *stream;
-    if (!startAudio(&stream, &sharedBuffer)) return 1;
+    //set windowName if arg is specified
+    const char *windowName = (argc == 3) ? argv[2] : "";
+    //start audio
+    if (!startAudio(stream, argv[1], windowName)){
+        exit(1);
+    }
 
     setupGlut(argc, argv);
 
     GLenum err = glewInit();
     if (GLEW_OK != err){
         fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
-        return 1;
-    }
-
-    time_t seconds;
-    time(&seconds);
-    srand((unsigned int) seconds);
-    for(int i = 0; i < BUFFER_SIZE; i++){
-        for(int j = 0; j < PACKET_SIZE; j++){
-            sharedBuffer[i].frames[j][0] = ((rand() % 100) - 50) * .02;
-            sharedBuffer[i].free = false;
-            sharedBuffer[i].order = i;
-        }
+        exit(1);
     }
 
     SetupRC();
     glutMainLoop();
 
     free(sharedBuffer);
-    endAudio(stream);
-    return 0;
+    endAudio(stream, NULL);
+    exit(0);
 }

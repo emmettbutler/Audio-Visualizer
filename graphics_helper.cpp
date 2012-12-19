@@ -21,7 +21,7 @@ int getLatestBufferIndex(){
     for(int i = 0; i < BUFFER_SIZE; i++){
         if(sharedBuffer[i].order > latest && !sharedBuffer[i].free){
             if(latest != -1){
-                sharedBuffer[latest].free = true;
+//                sharedBuffer[latest].free = true;
             }
             latest = i;
         }

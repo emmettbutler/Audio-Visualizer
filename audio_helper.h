@@ -8,6 +8,9 @@
 #define OUT_CHANNELS 2
 #define SAMPLE_RATE 48000
 #define BUFFER 256
+#define STEREO 2
+
+#define PI 3.14159265358979323846264338327950288
 
 using namespace std;
 
@@ -16,9 +19,16 @@ typedef struct {
     SF_INFO info;
 } SF_Container;
 
+typedef enum _WindowType {
+    Rect,
+    Hamming,
+    Hann,
+    Cosine
+} WindowType;
+
 PaStreamParameters getOutputParams();
+float window(float sample, int index, int width, WindowType windowType);
 bool printError(PaError error, string msg);
 
-bool startAudio(PaStream *stream, void *userData);
-
-void endAudio(PaStream *stream);
+bool startAudio(PaStream *stream, const char* filename, const char* windowname);
+void endAudio(PaStream *stream, void *userData);

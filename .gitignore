@@ -17,4 +17,7 @@
 .*.swp
 .*.un~
 
+# test files
+
 audio_main
+*.dSYM

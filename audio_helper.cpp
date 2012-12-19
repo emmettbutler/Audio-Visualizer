@@ -2,8 +2,11 @@
 
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include <fftw3.h>
 
 extern Packet *sharedBuffer;
+SF_Container sf;
+WindowType wt;
 
 //initialize PA; return a PaStreamParameters for use with startAudio()
 PaStreamParameters getOutputParams(){
@@ -17,13 +20,6 @@ PaStreamParameters getOutputParams(){
     outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
     outputParams.hostApiSpecificStreamInfo = NULL;
 
-    /*SF_Container infile;
-
-    infile.file = sf_open(filename, SFM_READ, &infile.info);
-    if (!(infile.file)){
-        printf("ERROR: could not open file\n");
-        return 0;
-    }*/
 
     return outputParams;
 }
@@ -35,9 +31,10 @@ static int paCallback( const void *inputBuffer,
     PaStreamCallbackFlags statusFlags,
     void *userData)
 {
-    // Packet *sharedBuffer = (Packet*) userData;
     int i, j, bufferIndex;
-    float *out = (float*) outputBuffer, sample;
+
+    float *out = (float*) outputBuffer, sample/*, fileBuffer[sf->info.channels*framesPerBuffer]*/;
+    float fileBuffer[framesPerBuffer*PAC_CHANNELS];
     static int order = 0;
 
     //search through the shared buffer for free packet
@@ -47,16 +44,25 @@ static int paCallback( const void *inputBuffer,
         //if we're on the last packet and none are free, return
         else if (i>=BUFFER_SIZE) return paContinue;
     }
-    //set free to false so packet won't be overwritten
+
     //set and increment order
     sharedBuffer[bufferIndex].order = order;
     order++;
 
-    //fill buffer with shit
+    //get samples from sound file
+    sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
+    //fill buffer with samples from sound file
     for (i=0; i<framesPerBuffer; i++){
+
         for (j=0; j<PAC_CHANNELS; j++){
-            sample = ((rand() % 100) - 50) * .02;
+            //send sample to output buffer
+            sample = fileBuffer[2*i+j];
             out[2*i + j] = sample;
+
+            //window and send sample to shared buffer
+            if (wt != Rect){
+                sample = window(sample, i, framesPerBuffer, wt);
+            }
             sharedBuffer[bufferIndex].frames[i][j] = sample;
         }
     }
@@ -73,12 +79,30 @@ bool printError(PaError error, string msg){
 }
 
 //open and start the audio stream - takes stream, callback function, and userdata
-bool startAudio(PaStream *stream, void *userData){
+bool startAudio(PaStream *stream, const char* filename, const char* windowname){
+    //open file
+    if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
+        printf("Error opening file\n");
+        return EXIT_FAILURE;
+    }
 
+    //port audio stuff
     PaStreamParameters outputParams = getOutputParams();
     PaError error;
 
-    error = Pa_OpenStream(&stream, NULL, &outputParams, SAMPLE_RATE, BUFFER, paNoFlag, paCallback, &userData);
+    error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
+    if (! printError(error, "PortAudio error - open stream: ")) return false;
+
+    //get window type
+    WindowType windowType;
+    if (windowname == "hann") windowType = Hann;
+    else if (windowname == "hamming") windowType = Hamming;
+    else if (windowname == "cosine") windowType = Cosine;
+    else windowType = Rect;
+
+    wt = windowType;
+
+    error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
     if (! printError(error, "PortAudio error - open stream: ")) return false;
 
     error = Pa_StartStream(stream);
@@ -87,8 +111,31 @@ bool startAudio(PaStream *stream, void *userData){
     return true;
 }
 
-void endAudio(PaStream *stream){
+//end PaStream and close sound file
+void endAudio(PaStream *stream, void *userData){
+
     Pa_StopStream(stream);
     Pa_CloseStream(stream);
     Pa_Terminate();
+
+    sf_close( sf.file );
+}
+
+//various window functions that take and return one sample
+//(meant to be used iteratively)
+float window(float sample, int index, int width, WindowType windowType){
+    switch (windowType){
+        case Hann:
+            sample *= .5 * (1 - cos((2*PI*index) / (width - 1)));
+            break;
+        case Hamming:
+            sample *= .54 - .46 * cos((2*PI*index) / (width - 1));
+            break;
+        case Cosine:
+            sample *= sin((PI*index) / (width - 1));
+        default:
+            break;
+    }
+
+    return sample;
 }
