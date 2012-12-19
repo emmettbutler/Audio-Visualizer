@@ -95,6 +95,7 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 	WindowType windowType;
 	if (windowname == "hann") windowType = Hann;
 	else if (windowname == "hamming") windowType = Hamming;
+	else if (windowname == "cosine") windowType = Cosine;
 	else windowType = Rect;
 
 	wt = windowType;
@@ -128,6 +129,8 @@ float window(float sample, int index, int width, WindowType windowType){
 		case Hamming:
 			sample *= .54 - .46 * cos((2*PI*index) / (width - 1));
 			break;
+		case Cosine:
+			sample *= sin((PI*index) / (width - 1));
 		default:
 			break;
 	}

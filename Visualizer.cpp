@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
     }
 
     //set windowName if arg is specified
-    char[] windowName = (argc == 3) ? argv[2] : "";
+    char windowName[] = (argc == 3) ? argv[2] : "";
     //start audio
     if (!startAudio(&stream, argv[1])) return 1;
 
