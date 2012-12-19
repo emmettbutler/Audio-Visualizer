@@ -4,7 +4,7 @@
 #include "Visualizer.h"
 #include <fftw3.h>
 
-// extern Packet *sharedBuffer;
+extern Packet *sharedBuffer;
 SF_Container sf;
 
 //initialize PA; return a PaStreamParameters for use with startAudio()
@@ -94,12 +94,29 @@ bool startAudio(PaStream *stream, const char* filename){
     return true;
 }
 
+//end PaStream and close sound file
 void endAudio(PaStream *stream, void *userData){
-	//SF_Container *sf = (SF_Container*) userData;
 
 	Pa_StopStream(stream);
 	Pa_CloseStream(stream);
 	Pa_Terminate();
 
 	sf_close( sf.file );
+}
+
+//various window functions that take and return one sample
+//(meant to be used iteratively)
+float window(float sample, int index, int width, WindowType windowType){
+	switch (windowType){
+		case Hann:
+			sample *= .5 * (1 - cos((2*PI*index) / (width - 1));
+			break;
+		case Hamming:
+			sample *= .54 - .46 * cos((2*PI*index) / (width - 1));
+			break;
+		default:
+			break;
+	}
+
+	return sample;
 }
