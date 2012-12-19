@@ -10,7 +10,7 @@
 #include <glut/glut.h>
 #else
 #define FREEGLUT_STATIC
-#include <GLUT/glut.h>
+#include <GL/glut.h>
 #endif
 
 #include <cmath>
