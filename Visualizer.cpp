@@ -41,17 +41,6 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    time_t seconds;
-    time(&seconds);
-    srand((unsigned int) seconds);
-    for(int i = 0; i < BUFFER_SIZE; i++){
-        for(int j = 0; j < PACKET_SIZE; j++){
-            sharedBuffer[i].frames[j][0] = ((rand() % 100) - 50) * .02;
-            sharedBuffer[i].free = false;
-            sharedBuffer[i].order = i;
-        }
-    }
-
     SetupRC();
     glutMainLoop();
 
