@@ -24,15 +24,10 @@ int main(int argc, char *argv[]){
     SF_Container infile;
 
     if ( argc != 2 ) {
-        cout << "Usage: " << argv[0] << " <soundfile>" << endl
+        cout << "Usage: " << argv[0] << " <soundfile>" << endl;
         return EXIT_FAILURE;
     }
 
-    //open file
-    /*if ((infile.file = sf_open(argv[1], SFM_READ, &infile.info ) ) == NULL ) {
-        cout << "Error opening file - see mega-nerd.com/libsndfile/ for accepted formats" << endl;
-        return EXIT_FAILURE;
-    }*/
     //start audio
     if (!startAudio(&stream, argv[1])) return 1;
 
@@ -61,6 +56,6 @@ int main(int argc, char *argv[]){
     glutMainLoop();
 
     free(sharedBuffer);
-    endAudio(stream);
+    endAudio(stream, NULL);
     return 0;
 }

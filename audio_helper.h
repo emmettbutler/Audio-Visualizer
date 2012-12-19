@@ -8,6 +8,7 @@
 #define OUT_CHANNELS 2
 #define SAMPLE_RATE 48000
 #define BUFFER 256
+#define PI 3.14159265358979323846264338327950288
 
 using namespace std;
 
@@ -15,6 +16,12 @@ typedef struct {
     SNDFILE *file;
     SF_INFO info;
 } SF_Container;
+
+typedef enum _WindowType {
+	Hamming,
+	Hann,
+	Cosine
+} WindowType;
 
 PaStreamParameters getOutputParams();
 bool printError(PaError error, string msg);

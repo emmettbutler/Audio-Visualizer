@@ -43,7 +43,7 @@ static int paCallback( const void *inputBuffer,
         //if we're on the last packet and none are free, return
         else if (i>=BUFFER_SIZE) return paContinue;
     }
-    //set free to false so packet won't be overwritten
+
     //set and increment order
     sharedBuffer[bufferIndex].order = order;
     order++;
@@ -109,7 +109,7 @@ void endAudio(PaStream *stream, void *userData){
 float window(float sample, int index, int width, WindowType windowType){
 	switch (windowType){
 		case Hann:
-			sample *= .5 * (1 - cos((2*PI*index) / (width - 1));
+			sample *= .5 * (1 - cos((2*PI*index) / (width - 1)));
 			break;
 		case Hamming:
 			sample *= .54 - .46 * cos((2*PI*index) / (width - 1));

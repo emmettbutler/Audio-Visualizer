@@ -6,7 +6,7 @@
 #include <GLGeometryTransform.h>
 #include <StopWatch.h>
 #define FREEGLUT_STATIC
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 
 #include <cmath>
 
