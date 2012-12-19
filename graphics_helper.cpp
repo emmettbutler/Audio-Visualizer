@@ -14,7 +14,10 @@ Packet *sharedBuffer;
 float barWidth = .11;
 int currentFrame;
 int prevMouse[2];
-float rot = 0.0;
+float rotation = 0.0;
+static GLfloat r = 1.0;
+static GLfloat g = 1.0;
+static GLfloat b = 1.0;
 
 int getLatestBufferIndex(){
     int latest = -1;
@@ -35,9 +38,17 @@ void RenderScene(void){
 
     currentFrame = getLatestBufferIndex();
 
-    static GLfloat vBarColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    r = .5 * sin(yRot * .1) + .5;
+    g = .5 * sin(yRot * .25) + .5;
+    b = .5 * sin(yRot * .15) + .5;
+    GLfloat vBarColor[] = { r, g, b, 1.0f };
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    r = .5 * sin(yRot * .2) + .5;
+    g = .5 * sin(yRot * .35) + .5;
+    b = .5 * sin(yRot * .15) + .5;
+    glClearColor(r, g, b, 1.0f);
 
     modelViewMatrix.PushMatrix();
 
@@ -96,7 +107,11 @@ void ChangeSize(int nWidth, int nHeight){
 }
 
 void mouseFunc(int x, int y){
-    float angular = float(m3dDegToRad(2.0f));
+    if(prevMouse[0] > x){
+        cameraFrame.RotateLocal(.09, 0.0, 0.0, 1.0);
+    } else if(prevMouse[0] < x){
+        cameraFrame.RotateLocal(-.09, 0.0, 0.0, 1.0);
+    }
 
     prevMouse[0] = x;
     prevMouse[1] = y;
@@ -120,7 +135,7 @@ void setupGlut(int count, char *values[]){
 void SetupRC(){
     shaderManager.InitializeStockShaders();
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClearColor(r, g, b, 1.0f);
 
     gltMakeCube(cubeBatch, .1f);
 
