@@ -62,7 +62,7 @@ static int paCallback( const void *inputBuffer,
             out[2*i + j] = sample;
 
             //window and send sample to shared buffer
-            sharedBuffer[bufferIndex].averageAmp += sample;
+            sharedBuffer[bufferIndex].averageAmp += (float)sample;
             if (wt != Rect){
                 sample = window(sample, i, framesPerBuffer, wt);
             }
@@ -70,7 +70,7 @@ static int paCallback( const void *inputBuffer,
 
         }
     }
-    sharedBuffer[bufferIndex].averageAmp /= framesPerBuffer;
+    sharedBuffer[bufferIndex].averageAmp /= (float)framesPerBuffer;
     sharedBuffer[bufferIndex].free = false;
 
     //if we've reached the end of the file, end callback

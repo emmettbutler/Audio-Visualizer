@@ -21,6 +21,7 @@ static GLfloat b = 1.0;
 extern bool flashColors;
 extern bool mouseRotate;
 
+// shared audio buffer management
 int getLatestBufferIndex(){
     int latest = -1;
     for(int i = 0; i < BUFFER_SIZE; i++){
@@ -34,6 +35,7 @@ int getLatestBufferIndex(){
     return latest;
 }
 
+// main rednering loop
 void RenderScene(void){
     static CStopWatch rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
@@ -41,14 +43,15 @@ void RenderScene(void){
 
     currentFrame = getLatestBufferIndex();
 
+    // cycle through a crazy color loop
     if(flashColors){
-        vBarColor[0] = .5 * sin(yRot * .1) + .5;
-        vBarColor[1] = .5 * sin(yRot * .25) + .5;
-        vBarColor[2] = .5 * sin(yRot * .15) + .5;
+        vBarColor[0] = .5;
+        vBarColor[1] = sharedBuffer[currentFrame].averageAmp * 60;
+        vBarColor[2] = 1.0;
 
-        r = .5 * sin(yRot * .2) + .5;
-        g = .5 * sin(yRot * .35) + .5;
-        b = .5 * sin(yRot * .15) + .5;
+        r = sharedBuffer[currentFrame].averageAmp * 10;
+        g = .2;
+        b = .2;
         glClearColor(r, g, b, 1.0f);
     }
 
@@ -60,15 +63,17 @@ void RenderScene(void){
     cameraFrame.GetCameraMatrix(mCamera);
     modelViewMatrix.PushMatrix(mCamera);
 
+    // set up light source
     M3DVector4f vLightPos = { 0.0f, 10.0f, 5.0f, 1.0f };
     M3DVector4f vLightEyePos;
     m3dTransformVector4(vLightEyePos, vLightPos, mCamera);
 
+    // draw prisms for amplitudes
     for(int i = 0; i < PACKET_SIZE; i++){
         modelViewMatrix.PushMatrix();
         GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
         modelViewMatrix.MultMatrix(bars[i]);
-        modelViewMatrix.Scale(barWidth, y, .1f);
+        modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 9);
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                 transformPipeline.GetModelViewMatrix(),
                 transformPipeline.GetProjectionMatrix(),
@@ -89,6 +94,7 @@ void RenderScene(void){
     }
 }
 
+// called on arrow keys
 void SpecialKeys(int key, int x, int y){
     float linear = 0.1f;
     float angular = float(m3dDegToRad(5.0f));
@@ -103,6 +109,7 @@ void SpecialKeys(int key, int x, int y){
         cameraFrame.RotateWorld(-angular, 0.0f, 1.0f, 0.0f);
 }
 
+// called when screen size changes
 void ChangeSize(int nWidth, int nHeight){
     glViewport(0, 0, nWidth, nHeight);
     viewFrustum.SetPerspective(35.0f, float(nWidth)/float(nHeight), 1.0f, 100.0f);
@@ -110,6 +117,7 @@ void ChangeSize(int nWidth, int nHeight){
     transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 }
 
+// called when mouse moves
 void mouseFunc(int x, int y){
     if(!mouseRotate) return;
 
@@ -123,6 +131,7 @@ void mouseFunc(int x, int y){
     prevMouse[1] = y;
 }
 
+// glut initialization
 void setupGlut(int count, char *values[]){
     gltSetWorkingDirectory(values[0]);
 
@@ -138,6 +147,7 @@ void setupGlut(int count, char *values[]){
     glutPassiveMotionFunc(mouseFunc);
 }
 
+// rendering context initialization
 void SetupRC(){
     shaderManager.InitializeStockShaders();
     glEnable(GL_DEPTH_TEST);
