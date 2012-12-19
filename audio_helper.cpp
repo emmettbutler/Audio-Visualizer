@@ -94,10 +94,11 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
     if (! printError(error, "PortAudio error - open stream: ")) return false;
 
     //get window type
+    string wn = (string) windowname;
     WindowType windowType;
-    if (windowname == "hann") windowType = Hann;
-    else if (windowname == "hamming") windowType = Hamming;
-    else if (windowname == "cosine") windowType = Cosine;
+    if (wn.compare("hann")) windowType = Hann;
+    else if (wn.compare("hamming")) windowType = Hamming;
+    else if (wn.compare("cosine")) windowType = Cosine;
     else windowType = Rect;
 
     wt = windowType;
