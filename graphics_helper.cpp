@@ -18,6 +18,8 @@ float rotation = 0.0;
 static GLfloat r = 1.0;
 static GLfloat g = 1.0;
 static GLfloat b = 1.0;
+extern bool flashColors;
+extern bool mouseRotate;
 
 int getLatestBufferIndex(){
     int latest = -1;
@@ -33,22 +35,24 @@ int getLatestBufferIndex(){
 }
 
 void RenderScene(void){
-    static CStopWatch    rotTimer;
+    static CStopWatch rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
+    GLfloat vBarColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
 
     currentFrame = getLatestBufferIndex();
 
-    r = .5 * sin(yRot * .1) + .5;
-    g = .5 * sin(yRot * .25) + .5;
-    b = .5 * sin(yRot * .15) + .5;
-    GLfloat vBarColor[] = { r, g, b, 1.0f };
+    if(flashColors){
+        vBarColor[0] = .5 * sin(yRot * .1) + .5;
+        vBarColor[1] = .5 * sin(yRot * .25) + .5;
+        vBarColor[2] = .5 * sin(yRot * .15) + .5;
+
+        r = .5 * sin(yRot * .2) + .5;
+        g = .5 * sin(yRot * .35) + .5;
+        b = .5 * sin(yRot * .15) + .5;
+        glClearColor(r, g, b, 1.0f);
+    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    r = .5 * sin(yRot * .2) + .5;
-    g = .5 * sin(yRot * .35) + .5;
-    b = .5 * sin(yRot * .15) + .5;
-    glClearColor(r, g, b, 1.0f);
 
     modelViewMatrix.PushMatrix();
 
@@ -107,6 +111,8 @@ void ChangeSize(int nWidth, int nHeight){
 }
 
 void mouseFunc(int x, int y){
+    if(!mouseRotate) return;
+
     if(prevMouse[0] > x){
         cameraFrame.RotateLocal(.09, 0.0, 0.0, 1.0);
     } else if(prevMouse[0] < x){

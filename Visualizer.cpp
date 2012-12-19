@@ -14,6 +14,8 @@
 #include "Visualizer.h"
 
 extern Packet *sharedBuffer;
+bool flashColors = false;
+bool mouseRotate = false;
 
 int main(int argc, char *argv[]){
     if(argc < 2){
@@ -25,12 +27,27 @@ int main(int argc, char *argv[]){
 
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
+    const char *windowName = "";
+    // check for args
+    for(int i = 0; i < argc; i++){
+        if(i + 1 > argc) break;
+        if(strcasecmp("-c", argv[i]) == 0){
+            flashColors = true;
+        }
+        if(strcasecmp("-r", argv[i]) == 0){
+            mouseRotate = true;
+        }
+        if(strcasecmp("-w", argv[i]) == 0){
+            windowName = argv[i+1];
+        }
+    }
+
     //set windowName if arg is specified
-    const char *windowName = (argc == 3) ? argv[2] : "";
     //start audio
     if (!startAudio(stream, argv[1], windowName)){
         exit(1);
     }
+
 
     setupGlut(argc, argv);
 
