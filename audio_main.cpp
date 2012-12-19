@@ -1,5 +1,7 @@
 #include "audio_helper.h"
 
+extern bool finished;
+
 static int paCallback( const void *inputBuffer,
     void *outputBuffer,
     unsigned long framesPerBuffer,
@@ -12,6 +14,7 @@ int main(int argc, char *argv[]){
 
     PaStream *stream;
     SF_Container infile;
+    finished = false;
 
     if ( argc != 2 ) {
         printf("Usage: %s <soundfile>\n", argv[0]);
@@ -26,7 +29,7 @@ int main(int argc, char *argv[]){
     //cout << infile.info.channels;
     startAudio(&stream, argv[1], "");
 
-    sleep(5);
+    while (finished == false);
 
     endAudio(&stream, &infile);
     return 0;

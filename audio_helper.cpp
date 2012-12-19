@@ -2,11 +2,13 @@
 
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include <string.h>
 #include <fftw3.h>
 
 extern Packet *sharedBuffer;
 SF_Container sf;
 WindowType wt;
+bool finished;
 
 //initialize PA; return a PaStreamParameters for use with startAudio()
 PaStreamParameters getOutputParams(){
@@ -20,7 +22,6 @@ PaStreamParameters getOutputParams(){
     outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
     outputParams.hostApiSpecificStreamInfo = NULL;
 
-
     return outputParams;
 }
 
@@ -33,7 +34,7 @@ static int paCallback( const void *inputBuffer,
 {
     int i, j, bufferIndex;
 
-    float *out = (float*) outputBuffer, sample/*, fileBuffer[sf->info.channels*framesPerBuffer]*/;
+    float *out = (float*) outputBuffer, sample;
     float fileBuffer[framesPerBuffer*PAC_CHANNELS];
     static int order = 0;
 
@@ -50,24 +51,35 @@ static int paCallback( const void *inputBuffer,
     order++;
 
     //get samples from sound file
-    sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
+    int readcount = sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
     //fill buffer with samples from sound file
     for (i=0; i<framesPerBuffer; i++){
 
         for (j=0; j<PAC_CHANNELS; j++){
             //send sample to output buffer
-            sample = fileBuffer[2*i+j];
+            if (sf.info.channels == STEREO) sample = fileBuffer[2*i+j];
+            else if (sf.info.channels == MONO) sample = fileBuffer[i];
             out[2*i + j] = sample;
 
             //window and send sample to shared buffer
+            sharedBuffer[bufferIndex].averageAmp += sample;
             if (wt != Rect){
                 sample = window(sample, i, framesPerBuffer, wt);
             }
             sharedBuffer[bufferIndex].frames[i][j] = sample;
+
         }
     }
+    sharedBuffer[bufferIndex].averageAmp /= framesPerBuffer;
     sharedBuffer[bufferIndex].free = false;
 
+    //if we've reached the end of the file, end callback
+    if (readcount < framesPerBuffer){
+    	finished = true;
+	    return paComplete;
+	}
+
+    //else continue
     return paContinue;
 }
 
@@ -82,8 +94,12 @@ bool printError(PaError error, string msg){
 bool startAudio(PaStream *stream, const char* filename, const char* windowname){
     //open file
     if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
-        printf("Error opening file\n");
-        return EXIT_FAILURE;
+        printf("Error opening file (see manual for accepted formats)\n");
+        return false;
+    }
+    if (sf.info.channels != MONO && sf.info.channels != STEREO){
+    	printf("Error: file must be stereo or mono");
+    	return false;
     }
 
     //port audio stuff
@@ -95,9 +111,9 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 
     //get window type
     WindowType windowType;
-    if (windowname == "hann") windowType = Hann;
-    else if (windowname == "hamming") windowType = Hamming;
-    else if (windowname == "cosine") windowType = Cosine;
+    if (!strcasecmp(windowname, "hann")) windowType = Hann;
+    else if (!strcasecmp(windowname, "hamming")) windowType = Hamming;
+    else if (!strcasecmp(windowname, "cosine")) windowType = Cosine;
     else windowType = Rect;
 
     wt = windowType;

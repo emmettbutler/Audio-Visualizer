@@ -16,10 +16,11 @@
 extern Packet *sharedBuffer;
 bool flashColors = false;
 bool mouseRotate = false;
+extern bool finished;
 
 int main(int argc, char *argv[]){
     if(argc < 2){
-        printf("Usage: %s <soundfile>\n", argv[0]);
+        printf("Usage: %s <soundfile> [windowtype]\n", argv[0]);
         exit(1);
     }
     //sound initialization by David Coss
