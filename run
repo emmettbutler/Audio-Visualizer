@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./Visualizer testfiles/test.wav -w hamming -c -r auto 2>>/dev/null

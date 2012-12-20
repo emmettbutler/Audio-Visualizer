@@ -17,17 +17,19 @@ Packet *sharedBuffer;
 
 float barWidth = .11;
 int currentFrame;
+int presetStep = 0;
 int prevMouse[2];
 
 static GLfloat r = 1.0;
 static GLfloat g = 1.0;
 static GLfloat b = 1.0;
 
-extern bool flashColors;
-extern bool mouseRotate;
 extern bool autoRotate;
-extern bool multiMacro;
+extern bool flashColors;
 extern bool expTranslate;
+extern bool multiMacro;
+
+extern bool mouseRotate;
 
 // shared audio buffer management
 int getLatestBufferIndex(){
@@ -121,6 +123,49 @@ void RenderScene(void){
     }
 }
 
+void keyboardFunc(unsigned char key, int x, int y){
+    if(key == 32){
+        if(presetStep < 5){
+            presetStep++;
+        } else {
+            presetStep = 0;
+        }
+
+        if(presetStep == 0){
+            autoRotate = true;
+            flashColors = false;
+            expTranslate = false;
+            multiMacro = false;
+        } else if(presetStep == 1){
+            autoRotate = true;
+            flashColors = true;
+            expTranslate = false;
+            multiMacro = false;
+        } else if(presetStep == 2){
+            autoRotate = true;
+            flashColors = true;
+            expTranslate = true;
+            multiMacro = false;
+        } else if(presetStep == 3){
+            autoRotate = false;
+            flashColors = true;
+            expTranslate = false;
+            multiMacro = true;
+        } else if(presetStep == 4){
+            autoRotate = false;
+            flashColors = true;
+            expTranslate = true;
+            multiMacro = true;
+        } else if(presetStep == 5){
+            autoRotate = false;
+            flashColors = false;
+            expTranslate = false;
+            multiMacro = false;
+            glClearColor(1.0, 1.0, 1.0, 1.0);
+        }
+    }
+}
+
 // called on arrow keys
 void SpecialKeys(int key, int x, int y){
     float linear = 0.1f;
@@ -172,6 +217,7 @@ void setupGlut(int count, char *values[]){
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
     glutPassiveMotionFunc(mouseFunc);
+    glutKeyboardFunc(keyboardFunc);
 }
 
 // rendering context initialization
@@ -198,11 +244,9 @@ void SetupRC(const char* shape){
         bars[i].SetOrigin(x, y, -3.0f);
     }
 
-    if(multiMacro){
-        for(int i = 0; i < NUM_MACROS; i++){
-            macros[i].refFrame.SetOrigin((rand() % 5) - 2.5, (rand() % 5) - 2.5, (rand() % 10) - 20);
-            //macros[i].refFrame.RotateLocalZ(i*5);
-            macros[i].multiplier = rand() % 10;
-        }
+    for(int i = 0; i < NUM_MACROS; i++){
+        macros[i].refFrame.SetOrigin((rand() % 5) - 2.5, (rand() % 5) - 2.5, (rand() % 10) - 20);
+        //macros[i].refFrame.RotateLocalZ(i*5);
+        macros[i].multiplier = rand() % 10;
     }
 }
