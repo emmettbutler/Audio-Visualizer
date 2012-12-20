@@ -131,7 +131,7 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 }
 
 //end PaStream and close sound file
-void endAudio(PaStream *stream, void *userData){
+void endAudio(PaStream *stream){
 
     Pa_StopStream(stream);
     Pa_CloseStream(stream);
