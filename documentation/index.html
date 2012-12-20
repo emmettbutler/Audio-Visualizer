@@ -77,15 +77,15 @@ An array of Packets should be used in order to compensate for the framerate diff
 
 <h4>Window functions</h4>
 <pre>
-	/* audio_helper.h */
-	typedef enum _WindowType {
-	    Rect,
-	    Hamming,
-	    Hann,
-	    Cosine
-	} WindowType;
+    /* audio_helper.h */
+    typedef enum _WindowType {
+        Rect,
+        Hamming,
+        Hann,
+        Cosine
+    } WindowType;
 
-	float window(float sample, int index, int width, WindowType windowType);
+    float window(float sample, int index, int width, WindowType windowType);
 </pre>
 <pre>Note that Rect is equivalent to no window at all.</pre>
 
