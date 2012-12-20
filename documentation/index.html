@@ -9,6 +9,7 @@
 </head>
 
 <body>
+<a href="http://github.com/emmett9001/opengl_audio_vis"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 <div id="top"></div>
 <div id="container">
 <div id="content">
@@ -17,6 +18,12 @@
 
 <h1>3D Sound Visualizer</h1>
 <h2>Emmett Butler and David Coss</h2>
+
+<p>Read the code:
+<a href="http://github.com/emmett9001/opengl_audio_vis">On Github</a>
+
+<br />
+<img src="images/screencap.png"></img>
 
 <h3>Summary</h3>
 <p>This project provides realtime 3d visualization of mono and stereo WAV audio streams. The visualizations created are mainly abstract and can be considered an emulation of the iTunes (or, more accurately, WMP) visualizer. It uses OpenGL, freeglut, portaudio and libsndfile to create these visuals in real time.</p>
@@ -91,11 +98,6 @@ An array of Packets should be used in order to compensate for the framerate diff
 
 <h4>Rendering Graphics</h4>
 <p>The main bulk of the graphics work happens in the RenderScene() function. This function is responsible for drawing the array of pre-created prisms representing the audio frames to the screen. It scales each prism proportionally to the amplitude value of the corresponding frame. It also performs a few scaling and translation transformations based on other audio parameters. To accomplish this, it uses the GLMatrixStack class from GLTools to help keep track of the various visual transformations.</p>
-<p>Read the code:
-<a href="http://github.com/emmett9001/opengl_audio_vis">On Github</a>
-
-<br />
-<img src="images/screencap.png"></img>
 
 
 <!--Don't edit anything below here-->
