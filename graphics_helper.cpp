@@ -21,6 +21,7 @@ static GLfloat b = 1.0;
 extern bool flashColors;
 extern bool mouseRotate;
 extern bool autoRotate;
+extern bool expTranslate;
 
 // shared audio buffer management
 int getLatestBufferIndex(){
@@ -46,13 +47,13 @@ void RenderScene(void){
 
     // cycle through a crazy color loop
     if(flashColors){
-        vBarColor[0] = .5;
-        vBarColor[1] = sharedBuffer[currentFrame].averageAmp * 60;
+        vBarColor[0] = .7;
+        vBarColor[1] = .2 + sharedBuffer[currentFrame].averageAmp * 60;
         vBarColor[2] = 1.0;
 
-        r = sharedBuffer[currentFrame].averageAmp;
-        g = .2;
-        b = .2;
+        b = sharedBuffer[currentFrame].averageAmp;
+        g = 0;
+        r = 0;
         glClearColor(r, g, b, 1.0f);
     }
 
@@ -79,6 +80,9 @@ void RenderScene(void){
         GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
         modelViewMatrix.MultMatrix(bars[i]);
         modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 4);
+        if(expTranslate){
+            modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
+        }
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                 transformPipeline.GetModelViewMatrix(),
                 transformPipeline.GetProjectionMatrix(),
@@ -153,15 +157,26 @@ void setupGlut(int count, char *values[]){
 }
 
 // rendering context initialization
-void SetupRC(){
+void SetupRC(const char* shape){
     shaderManager.InitializeStockShaders();
     glEnable(GL_DEPTH_TEST);
     glClearColor(r, g, b, 1.0f);
 
     gltMakeCube(cubeBatch, .1f);
 
+    GLfloat x, y;
+
     for(int i = 0; i < PACKET_SIZE; i++){
-        GLfloat x = -(PACKET_SIZE * .5 * barWidth * .2) + i * barWidth * .2;
-        bars[i].SetOrigin(x, 0.0f, -3.0f);
+        if(strcasecmp("circle", shape) == 0){
+            x = sin(i * .1);
+            y = cos(i * .1);
+        } else if(strcasecmp("wave", shape) == 0){
+            x = -(PACKET_SIZE * .5 * barWidth * .2) + i * barWidth * .2;
+            y = cos(i * .1);
+        } else{
+            x = -(PACKET_SIZE * .5 * barWidth * .2) + i * barWidth * .2;
+            y = 0;
+        }
+        bars[i].SetOrigin(x, y, -3.0f);
     }
 }

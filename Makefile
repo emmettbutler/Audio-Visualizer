@@ -44,4 +44,4 @@ math3d.o : $(SHAREDPATH)math3d.cpp
 
 
 clean:
-	rm -f *.o .*.un~ .*.swp $(MAIN)
+	rm -rf *.dSYM *.o .*.un~ .*.swp $(MAIN)

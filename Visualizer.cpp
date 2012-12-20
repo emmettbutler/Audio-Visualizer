@@ -17,6 +17,7 @@ extern Packet *sharedBuffer;
 bool flashColors = false;
 bool mouseRotate = false;
 bool autoRotate = false;
+bool expTranslate = false;
 extern bool finished;
 
 void printUsage(const char *name){
@@ -34,13 +35,14 @@ int main(int argc, char *argv[]){
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
     const char *windowName = "";
+    const char *shapeName = "";
     // check for args
     for(int i = 0; i < argc; i++){
         if(i + 1 > argc) break;
         if(strcasecmp("-c", argv[i]) == 0){
             flashColors = true;
         }
-        if(strcasecmp("-r", argv[i]) == 0){
+        else if(strcasecmp("-r", argv[i]) == 0){
             if(i + 1 == argc){
                 printUsage(argv[0]);
             } else if(strcasecmp(argv[i + 1], "mouse") == 0){
@@ -50,11 +52,20 @@ int main(int argc, char *argv[]){
             }
 
         }
-        if(strcasecmp("-w", argv[i]) == 0){
+        else if(strcasecmp("-w", argv[i]) == 0){
             if(i + 1 == argc){
                 printUsage(argv[0]);
             }
             windowName = argv[i+1];
+        }
+        else if(strcasecmp("-s", argv[i]) == 0){
+            if(i + 1 == argc){
+                printUsage(argv[0]);
+            }
+            shapeName = argv[i + 1];
+        }
+        else if(strcasecmp("-t", argv[i]) == 0){
+            expTranslate = true;
         }
     }
 
@@ -72,7 +83,7 @@ int main(int argc, char *argv[]){
         exit(1);
     }
 
-    SetupRC();
+    SetupRC(shapeName);
     glutMainLoop();
 
     free(sharedBuffer);

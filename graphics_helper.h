@@ -15,8 +15,14 @@
 
 #include <cmath>
 
+typedef enum _shape {
+    Circle,
+    Line,
+    Sine
+} Shape;
+
 void RenderScene(void);
 void SpecialKeys(int key, int x, int y);
 void ChangeSize(int nWidth, int nHeight);
 void setupGlut(int count, char *values[]);
-void SetupRC();
+void SetupRC(const char* shape);
