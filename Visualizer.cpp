@@ -18,6 +18,7 @@ bool flashColors = false;
 bool mouseRotate = false;
 bool autoRotate = false;
 bool expTranslate = false;
+bool multiMacro = false;
 extern bool finished;
 
 void printUsage(const char *name){
@@ -66,6 +67,9 @@ int main(int argc, char *argv[]){
         }
         else if(strcasecmp("-t", argv[i]) == 0){
             expTranslate = true;
+        }
+        else if(strcasecmp("-m", argv[i]) == 0){
+            multiMacro = true;
         }
     }
 

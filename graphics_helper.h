@@ -21,6 +21,11 @@ typedef enum _shape {
     Sine
 } Shape;
 
+typedef struct _frame{
+    GLFrame refFrame;
+    GLfloat multiplier;
+} MacroFrame;
+
 void RenderScene(void);
 void SpecialKeys(int key, int x, int y);
 void ChangeSize(int nWidth, int nHeight);

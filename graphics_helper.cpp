@@ -1,6 +1,8 @@
 #include "graphics_helper.h"
 #include "Visualizer.h"
 
+const int NUM_MACROS = 20;
+
 GLShaderManager shaderManager;
 GLBatch cubeBatch;
 GLMatrixStack projectionMatrix;
@@ -9,18 +11,22 @@ GLGeometryTransform transformPipeline;
 GLMatrixStack modelViewMatrix;
 GLFrame cameraFrame;
 GLFrame bars[PACKET_SIZE];
+MacroFrame macros[NUM_MACROS];
 
 Packet *sharedBuffer;
+
 float barWidth = .11;
 int currentFrame;
 int prevMouse[2];
-float rotation = 0.0;
+
 static GLfloat r = 1.0;
 static GLfloat g = 1.0;
 static GLfloat b = 1.0;
+
 extern bool flashColors;
 extern bool mouseRotate;
 extern bool autoRotate;
+extern bool multiMacro;
 extern bool expTranslate;
 
 // shared audio buffer management
@@ -74,22 +80,34 @@ void RenderScene(void){
     M3DVector4f vLightEyePos;
     m3dTransformVector4(vLightEyePos, vLightPos, mCamera);
 
-    // draw prisms for amplitudes
-    for(int i = 0; i < PACKET_SIZE; i++){
-        modelViewMatrix.PushMatrix();
-        GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
-        modelViewMatrix.MultMatrix(bars[i]);
-        modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 4);
-        if(expTranslate){
-            modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
+    for(int m = 0; m < NUM_MACROS; m++){
+        if(multiMacro){
+            modelViewMatrix.PushMatrix();
+            macros[m].refFrame.RotateLocalY(.01 * macros[m].multiplier);
+            macros[m].refFrame.RotateLocalX(.5 * sharedBuffer[currentFrame].averageAmp);
+            modelViewMatrix.MultMatrix(macros[m].refFrame);
         }
-        shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
-                transformPipeline.GetModelViewMatrix(),
-                transformPipeline.GetProjectionMatrix(),
-                vLightEyePos, vBarColor);
-        cubeBatch.Draw();
-        modelViewMatrix.PopMatrix();
+        for(int i = 0; i < PACKET_SIZE; i++){
+            modelViewMatrix.PushMatrix();
+            GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
+            modelViewMatrix.MultMatrix(bars[i]);
+            modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 4);
+            if(expTranslate){
+                modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
+            }
+            shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
+                    transformPipeline.GetModelViewMatrix(),
+                    transformPipeline.GetProjectionMatrix(),
+                    vLightEyePos, vBarColor);
+            cubeBatch.Draw();
+            modelViewMatrix.PopMatrix();
+        }
+        if(multiMacro){
+            modelViewMatrix.PopMatrix();
+        }
     }
+
+    // draw prisms for amplitudes
     modelViewMatrix.PopMatrix();
 
     modelViewMatrix.PopMatrix();
@@ -178,5 +196,13 @@ void SetupRC(const char* shape){
             y = 0;
         }
         bars[i].SetOrigin(x, y, -3.0f);
+    }
+
+    if(multiMacro){
+        for(int i = 0; i < NUM_MACROS; i++){
+            macros[i].refFrame.SetOrigin((rand() % 5) - 2.5, (rand() % 5) - 2.5, (rand() % 10) - 20);
+            //macros[i].refFrame.RotateLocalZ(i*5);
+            macros[i].multiplier = rand() % 10;
+        }
     }
 }
