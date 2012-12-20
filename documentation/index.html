@@ -37,8 +37,13 @@
 <h4>Starting and ending audio</h4>
 <pre>
 	bool startAudio(PaStream *stream, const char* filename, const char* windowname);
-	
-	void endAudio(PaStream *stream, void *userData);
+
+	void endAudio(PaStream *stream);
+</pre>
+<p>Handles all Portaudio and libsndfile functions necessary to begin or stop playback of the file with the specified file name. Example implementation:<p>
+<pre>
+	PaStream *stream;
+	startAudio(PaStream *stream, "test.wav", "hamming");
 </pre>
 
 <h4>Reading audio</h4>
