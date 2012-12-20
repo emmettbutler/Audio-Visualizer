@@ -23,39 +23,19 @@
 
 <h3>Usage</h3>
 <pre>
-	Visualizer &lt;soundfile&gt; -w windowtype -r -c
+	<b>Visualizer &lt;soundfile&gt; [-w hamming|hann|cosine] [-c] [-r]</b>
 		soundfile : the file to be played
-		-w : the windowing function for the waveform (see below)
-		-r : enable mouse rotation
+		-w : the windowing function for the waveform
 		-c : enable flashing colours
+		-r : enable mouse rotation
 </pre>
-<p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include:
-<ul>
-   <li>WAV
-   <li>AIFF
-   <li>FLAC
-</ul>
-<p>For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
-<p><b>
+<p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include WAV, AIFF, and FLAC. For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
+<p><b>-w</b> is an optional argument to specify the windowing function for the waveform, giving the oscillator a "tapering" effect. 
 
 <h3>API</h3>
 
 <p>This is a test link:
 <a href="http://www.nyu.edu/projects/farbood/2618">C Programming Class Website</a>
-
-<p>This is an unordered list:
-<ul>
-   <li>List item 1
-   <li>List item 2
-   <li>List item 3
-</ul>
-
-<p>This is an ordered list:
-<ol>
-   <li>List item 1
-   <li>List item 2
-   <li>List item 3
-</ol>
 
 <p>This is a test image:<br>
 <img src="images/test.gif"></img>
