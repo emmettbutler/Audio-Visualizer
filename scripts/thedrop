@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./Visualizer testfiles/chibitech.wav -c -s circle -m
