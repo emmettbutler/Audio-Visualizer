@@ -30,7 +30,7 @@
 		-r : enable mouse rotation
 </pre>
 <p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include WAV, AIFF, and FLAC. For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
-<p><b>-w</b> is an optional argument to specify the windowing function for the waveform, giving the oscillator a "tapering" effect. 
+<p><b>-w</b> is an optional argument to specify a <a href="http://en.wikipedia.org/wiki/Hann_function">windowing function</a> for the waveform, giving the oscillator a "tapering" effect. Valid windowing functions are "hann", "hamming", and "cosine". Leaving out this flag or specifying an invalid window will result in no window being applied.
 
 <h3>API</h3>
 
