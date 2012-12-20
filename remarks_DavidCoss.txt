@@ -1,0 +1,3 @@
+David Coss
+
+The project did wind up being somewhat more difficult than I thought it would be. However, in the process I gained a much better handle on low-level file and audio processing, which I found satisfying and enlightening. I'm particularly proud of of our implementation of a shared buffer in order to compensate for framerate differences between the two threads, and how cleanly we separated our code into different modules. There are still some organizational issues that could be resolved if we continue to work on it, such as the locations of all the different macros (I particularly think it's a little dangerous that both BUFFER and PACKET_SIZE need to be the same number in order to work properly).
