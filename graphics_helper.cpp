@@ -194,9 +194,14 @@ void mouseFunc(int x, int y){
     if(!mouseRotate) return;
 
     if(prevMouse[0] > x){
-        cameraFrame.RotateLocal(.09, 0.0, 0.0, 1.0);
+        cameraFrame.RotateLocal(.01, 0.0, 1.0, 0.0);
     } else if(prevMouse[0] < x){
-        cameraFrame.RotateLocal(-.09, 0.0, 0.0, 1.0);
+        cameraFrame.RotateLocal(-.01, 0.0, 1.0, 0.0);
+    }
+    else if(prevMouse[1] > y){
+        cameraFrame.RotateLocal(.01, 1.0, 0.0, 0.0);
+    } else if(prevMouse[1] < y){
+        cameraFrame.RotateLocal(-.01, 1.0, 0.0, 0.0);
     }
 
     prevMouse[0] = x;
@@ -216,7 +221,7 @@ void setupGlut(int count, char *values[]){
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
-    glutPassiveMotionFunc(mouseFunc);
+    glutMotionFunc(mouseFunc);
     glutKeyboardFunc(keyboardFunc);
 }
 
