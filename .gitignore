@@ -21,3 +21,5 @@
 
 audio_main
 *.dSYM/
+
+*.tgz
