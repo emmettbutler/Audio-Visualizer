@@ -75,14 +75,6 @@ The project comes with a makefile with targets for linux and MacOS. The linux ta
 
 An array of Packets should be used in order to compensate for the framerate differences between the GL thread and the Portaudio thread. This is implemented in audio_helper.cpp and graphics_helper.cpp as <b>sharedBuffer</b>.<br />
 
-<h4>Rendering Graphics</h4>
-<p>The main bulk of the graphics work happens in the RenderScene() function. This function is responsible for drawing the array of pre-created prisms representing the audio frames to the screen. It scales each prism proportionally to the amplitude value of the corresponding frame. It also performs a few scaling and translation transformations based on other audio parameters. To accomplish this, it uses the GLMatrixStack class from GLTools to help keep track of the various visual transformations.</p>
-<p>Read the code:
-<a href="http://github.com/emmett9001/opengl_audio_vis">On Github</a>
-
-<br />
-<img src="images/screencap.png"></img>
-
 <h4>Window functions</h4>
 <pre>
 	/* audio_helper.h */
@@ -96,6 +88,15 @@ An array of Packets should be used in order to compensate for the framerate diff
 	float window(float sample, int index, int width, WindowType windowType);
 </pre>
 <pre>Note that Rect is equivalent to no window at all.</pre>
+
+<h4>Rendering Graphics</h4>
+<p>The main bulk of the graphics work happens in the RenderScene() function. This function is responsible for drawing the array of pre-created prisms representing the audio frames to the screen. It scales each prism proportionally to the amplitude value of the corresponding frame. It also performs a few scaling and translation transformations based on other audio parameters. To accomplish this, it uses the GLMatrixStack class from GLTools to help keep track of the various visual transformations.</p>
+<p>Read the code:
+<a href="http://github.com/emmett9001/opengl_audio_vis">On Github</a>
+
+<br />
+<img src="images/screencap.png"></img>
+
 
 <!--Don't edit anything below here-->
 </div>
