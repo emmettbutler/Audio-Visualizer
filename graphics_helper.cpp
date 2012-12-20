@@ -171,6 +171,8 @@ void SpecialKeys(int key, int x, int y){
     float linear = 0.1f;
     float angular = float(m3dDegToRad(5.0f));
 
+    // TODO - flatten movement to the XZ axis
+
     if(key == GLUT_KEY_UP)
         cameraFrame.MoveForward(linear);
     if(key == GLUT_KEY_DOWN)
@@ -193,15 +195,17 @@ void ChangeSize(int nWidth, int nHeight){
 void mouseFunc(int x, int y){
     if(!mouseRotate) return;
 
+    float drag = .003;
+
     if(prevMouse[0] > x){
-        cameraFrame.RotateLocal(.01, 0.0, 1.0, 0.0);
+        cameraFrame.RotateLocal(drag, 0.0, 1.0, 0.0);
     } else if(prevMouse[0] < x){
-        cameraFrame.RotateLocal(-.01, 0.0, 1.0, 0.0);
+        cameraFrame.RotateLocal(-drag, 0.0, 1.0, 0.0);
     }
     else if(prevMouse[1] > y){
-        cameraFrame.RotateLocal(.01, 1.0, 0.0, 0.0);
+        cameraFrame.RotateLocal(drag, 1.0, 0.0, 0.0);
     } else if(prevMouse[1] < y){
-        cameraFrame.RotateLocal(-.01, 1.0, 0.0, 0.0);
+        cameraFrame.RotateLocal(-drag, 1.0, 0.0, 0.0);
     }
 
     prevMouse[0] = x;
