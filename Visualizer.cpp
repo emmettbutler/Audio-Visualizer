@@ -16,6 +16,7 @@
 extern Packet *sharedBuffer;
 bool flashColors = false;
 bool mouseRotate = false;
+bool autoRotate = false;
 extern bool finished;
 
 void printUsage(const char *name){
@@ -40,7 +41,14 @@ int main(int argc, char *argv[]){
             flashColors = true;
         }
         if(strcasecmp("-r", argv[i]) == 0){
-            mouseRotate = true;
+            if(i + 1 == argc){
+                printUsage(argv[0]);
+            } else if(strcasecmp(argv[i + 1], "mouse") == 0){
+                mouseRotate = true;
+            } else if(strcasecmp(argv[i + 1], "auto") == 0){
+                autoRotate = true;
+            }
+
         }
         if(strcasecmp("-w", argv[i]) == 0){
             if(i + 1 == argc){

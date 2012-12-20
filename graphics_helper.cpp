@@ -20,6 +20,7 @@ static GLfloat g = 1.0;
 static GLfloat b = 1.0;
 extern bool flashColors;
 extern bool mouseRotate;
+extern bool autoRotate;
 
 // shared audio buffer management
 int getLatestBufferIndex(){
@@ -49,7 +50,7 @@ void RenderScene(void){
         vBarColor[1] = sharedBuffer[currentFrame].averageAmp * 60;
         vBarColor[2] = 1.0;
 
-        r = sharedBuffer[currentFrame].averageAmp * 10;
+        r = sharedBuffer[currentFrame].averageAmp;
         g = .2;
         b = .2;
         glClearColor(r, g, b, 1.0f);
@@ -62,6 +63,10 @@ void RenderScene(void){
     M3DMatrix44f mCamera;
     cameraFrame.GetCameraMatrix(mCamera);
     modelViewMatrix.PushMatrix(mCamera);
+    if(autoRotate){
+        cameraFrame.RotateWorld(.01, 0.0, 0.0, 1.0);
+        cameraFrame.MoveForward(-.1 * sin(yRot * .05));
+    }
 
     // set up light source
     M3DVector4f vLightPos = { 0.0f, 10.0f, 5.0f, 1.0f };
@@ -73,7 +78,7 @@ void RenderScene(void){
         modelViewMatrix.PushMatrix();
         GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
         modelViewMatrix.MultMatrix(bars[i]);
-        modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 9);
+        modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 4);
         shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                 transformPipeline.GetModelViewMatrix(),
                 transformPipeline.GetProjectionMatrix(),
