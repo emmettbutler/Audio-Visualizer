@@ -239,6 +239,7 @@ void SetupRC(const char* shape){
 
     GLfloat x, y;
 
+    // TODO - make these selectable
     for(int i = 0; i < PACKET_SIZE; i++){
         if(strcasecmp("circle", shape) == 0){
             x = sin(i * .1);
