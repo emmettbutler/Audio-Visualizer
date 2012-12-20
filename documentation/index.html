@@ -67,6 +67,9 @@ The project comes with a makefile with targets for linux and MacOS. The linux ta
     } Packet;
 </pre>
 
+<h4>Rendering Graphics</h4>
+<p>The main bulk of the graphics work happens in the RenderScene() function. This function is responsible for drawing the array of pre-created prisms representing the audio frames to the screen. It scales each prism proportionally to the amplitude value of the corresponding frame. It also performs a few scaling and translation transformations based on other audio parameters. To accomplish this, it uses the GLMatrixStack class from GLTools to help keep track of the various visual transformations.</p>
+
 An array of Packets should be used in order to compensate for the framerate differences between the GL thread and the Portaudio thread. This is implemented in audio_helper.cpp and graphics_helper.cpp as <b>sharedBuffer</b>.<br />
 
 <p>Read the code:
