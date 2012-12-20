@@ -10,3 +10,5 @@ techniques. If I could do it over, i would have spent a bit more time ensuring
 that it worked cross-platform, since right now linux is the only reliable
 system to run it on. That said, I think this project is awesome and look forward
 to continuing it.
+
+~emmett
