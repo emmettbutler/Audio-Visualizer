@@ -38,7 +38,9 @@
 <p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include WAV, AIFF, and FLAC. For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
 <p><b>-w</b> is an optional argument to specify a <a href="http://en.wikipedia.org/wiki/Hann_function">windowing function</a> for the waveform, giving the oscillator a "tapering" effect. Valid windowing functions are "hann", "hamming", and "cosine". Leaving out this flag or specifying an invalid window will result in no window being applied.<br />
 
-The arrow keys can be used to manually move the camera forward, back, left, and right. When the -r mouse option is used, the mouse can be used to manually rotate the waveform.
+<p>To test the visualizer, use one of the included test audio files in testfiles. For example: <b>./Visualizer testfiles/sonic.wav -c -t -s circle</b></p>
+
+<p>The arrow keys can be used to manually move the camera forward, back, left, and right. When the -r mouse option is used, the mouse can be used to manually rotate the waveform.</p>
 
 <h3>Compiling</h3>
 The project comes with a makefile with targets for linux and MacOS. The linux target is tested and works with jack, alsa, freeglut3 and libgl. Note that the project requires OpenGL 2.1 or later.
