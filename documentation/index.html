@@ -34,11 +34,29 @@
 
 <h3>API</h3>
 
-<p>This is a test link:
-<a href="http://www.nyu.edu/projects/farbood/2618">C Programming Class Website</a>
+<h4>Starting and ending audio</h4>
+<pre>
+	bool startAudio(PaStream *stream, const char* filename, const char* windowname);
+	
+	void endAudio(PaStream *stream, void *userData);
+</pre>
 
-<p>This is a test image:<br>
-<img src="images/test.gif"></img>
+<h4>Reading audio</h4>
+<p>All audio samples are stored in Packets. The packet structure is defined in Visualizer.h. Packet.frames is a 2D array of floats; the first dimension specifies the audio frame and the second dimension specifies the channel. Packet.free specifies whether the frames array is in read or write mode. If Packet.free is true, Packet.frames can be written to; if Packet.free is false, it can be read.</p>
+<pre>
+	/* Visualizer.h */
+	#define PACKET_SIZE 256
+	#define PAC_CHANNELS 2
+
+	typedef struct _packet{
+	    float frames[PACKET_SIZE][PAC_CHANNELS];
+	    bool free;  // is this packet free to overwrite
+	    int order;  // where in the sequence of samples is this packet
+	    float averageAmp;
+	} Packet;
+</pre>
+
+An array of Packets should be used in order to compensate for the framerate differences between the GL thread and the Portaudio thread. This is implemented in audio_helper.cpp and graphics_helper.cpp as <b>sharedBuffer</b>.
 
 <!--Don't edit anything below here-->
 </div>

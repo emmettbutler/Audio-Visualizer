@@ -31,6 +31,6 @@ int main(int argc, char *argv[]){
 
     while (finished == false);
 
-    endAudio(&stream, &infile);
+    endAudio(&stream);
     return 0;
 }

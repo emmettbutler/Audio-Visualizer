@@ -32,4 +32,4 @@ float window(float sample, int index, int width, WindowType windowType);
 bool printError(PaError error, string msg);
 
 bool startAudio(PaStream *stream, const char* filename, const char* windowname);
-void endAudio(PaStream *stream, void *userData);
+void endAudio(PaStream *stream);

@@ -76,6 +76,6 @@ int main(int argc, char *argv[]){
     glutMainLoop();
 
     free(sharedBuffer);
-    endAudio(stream, NULL);
+    endAudio(stream);
     exit(0);
 }
