@@ -19,26 +19,37 @@
 <h2>Emmett Butler and David Coss</h2>
 
 <h3>Summary</h3>
-<p>This is a 3D visualizer for audio files.
+<p>This project provides realtime 3d visualization of mono and stereo WAV audio streams. The visualizations created are mainly abstract and can be considered an emulation of the iTunes (or, more accurately, WMP) visualizer. It uses OpenGL, freeglut, portaudio and libsndfile to create these visuals in real time.</p>
+
+<p>Invoked from the command line, the visualizer takes the name of an audio file and a number of flags specifying graphical behaviors. These can range from the basic flat waveform to a colorful, dynamic shape of constantly-changing data.</p>
+
+<p>The main challenge of the project (beyond learning a book's worth of 3D graphics theory and practice) was to properly synchronize the audio streaming with the graphics rendering loop. This is accomplished using a shared buffer contianing a number of renderable "screens" worth of audio waveform data. The audio streamer acts as a server that fills free slots in the buffer, and the graphics rendering client pulls data from the filled slots. Since the audio runs at a much faster rate than the graphics, the audio ends up waiting around a bit. This is ok, since it has plenty of heavy number-crunching capacity as visualizations grow more advanced.</p>
 
 <h3>Usage</h3>
 <pre>
-	<b>Visualizer &lt;soundfile&gt; [-w hamming|hann|cosine] [-c] [-r]</b>
+	<b>Visualizer &lt;soundfile&gt; [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]</b>
 		soundfile : the file to be played
 		-w : the windowing function for the waveform
-		-c : enable flashing colours
-		-r : enable mouse rotation
+		-c : enable flashing colors
+		-r : rotation mode
+		-s : base waveform shape
+		-t : exponential frame translation
 </pre>
 <p><b>&lt;soundfile&gt;</b> must be a mono or stereo audio file. Supported formats include WAV, AIFF, and FLAC. For a list of file formats that are compatible with libsndfile but are untested with this program, see <a href="http://www.mega-nerd.com/libsndfile/">the libsndfile documentation</a>.
-<p><b>-w</b> is an optional argument to specify a <a href="http://en.wikipedia.org/wiki/Hann_function">windowing function</a> for the waveform, giving the oscillator a "tapering" effect. Valid windowing functions are "hann", "hamming", and "cosine". Leaving out this flag or specifying an invalid window will result in no window being applied.
+<p><b>-w</b> is an optional argument to specify a <a href="http://en.wikipedia.org/wiki/Hann_function">windowing function</a> for the waveform, giving the oscillator a "tapering" effect. Valid windowing functions are "hann", "hamming", and "cosine". Leaving out this flag or specifying an invalid window will result in no window being applied.<br />
+
+The arrow keys can be used to manually move the camera forward, back, left, and right. When the -r mouse option is used, the mouse can be used to manually rotate the waveform.
+
+<h3>Compiling</h3>
+The project comes with a makefile with targets for linux and MacOS. The linux target is tested and works with jack, alsa, freeglut3 and libgl. Note that the project requires OpenGL 2.1 or later.
 
 <h3>API</h3>
 
-<p>This is a test link:
-<a href="http://www.nyu.edu/projects/farbood/2618">C Programming Class Website</a>
+<p>Read the code:
+<a href="http://github.com/emmett9001/opengl_audio_vis">On Github</a>
 
-<p>This is a test image:<br>
-<img src="images/test.gif"></img>
+<br />
+<img src="images/screencap.png"></img>
 
 <!--Don't edit anything below here-->
 </div>

@@ -21,7 +21,7 @@ bool expTranslate = false;
 extern bool finished;
 
 void printUsage(const char *name){
-    printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-r autp|mouse]\n", name);
+    printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]\n", name);
     exit(1);
 }
 
