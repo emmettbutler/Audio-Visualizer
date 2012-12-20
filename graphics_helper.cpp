@@ -254,7 +254,8 @@ void SetupRC(const char* shape){
     }
 
     for(int i = 0; i < NUM_MACROS; i++){
-        macros[i].refFrame.SetOrigin((rand() % 5) - 2.5, (rand() % 5) - 2.5, (rand() % 10) - 20);
+        // TODO - parameterize this spacing
+        macros[i].refFrame.SetOrigin((rand() % 20) - 10, (rand() % 20) - 10, (rand() % 10) - 20);
         //macros[i].refFrame.RotateLocalZ(i*5);
         macros[i].multiplier = rand() % 10;
     }
