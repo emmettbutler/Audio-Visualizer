@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.out
+Visualizer
 
 # Compiled Dynamic libraries
 *.so
