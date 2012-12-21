@@ -18,29 +18,21 @@ CFLAGS = $(CPPFLAGS) @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 INSTALL = @INSTALL@
+
 # init awful hardcoding....
 # this would all be better if i could find how to construct lists in m4 macros
-FRAMEWORK_CARBON = @FRAMEWORK_CARBON@
-FRAMEWORK_OPENGL = @FRAMEWORK_OPENGL@
-FRAMEWORK_GLUT = @FRAMEWORK_GLUT@
-FRAMEWORKS = $(FRAMEWORK_GLUT) $(FRAMEWORK_OPENGL) $(FRAMEWORK_CARBON)
+FRAMEWORKS = @FRAMEWORK_GLUT@ @FRAMEWORK_OPENGL@ @FRAMEWORK_CARBON@
 # end horribleness
+
+STATICLIBS = @LIBPORTAUDIOA@
 
 MAIN = Visualizer
 SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-#GRAPHICSLIBS = -lglut -lGL # linux only
-#GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT # mac only
-#AUDIOLIBS = -lportaudio -lsndfile # linux/mac
-#AUDIOLIBS_SYS = -lrt -ljack -lasound # linux only
-
 all: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(LIBS) $(FRAMEWORKS)
-
-osx: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS_OSX) $(AUDIOLIBS)
+	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(STATICLIBS) $(LIBS) $(FRAMEWORKS)
 
 $(MAIN).o : $(MAIN).cpp
 	$(CXX) $(INCDIRS) -c $(MAIN).cpp
@@ -50,9 +42,6 @@ graphics_helper.o : graphics_helper.cpp
 
 audio_helper.o : audio_helper.cpp
 	$(CXX) -c audio_helper.cpp
-
-audio_only :
-	$(CXX) audio_helper.cpp audio_main.cpp -o audio_main $(AUDIOLIBS)
 
 externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 
