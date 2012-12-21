@@ -1,14 +1,14 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
 AC_PREREQ([2.68])
-AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_INIT([audio-vis], [0.2], [emmett.butler321@gmail.com])
 
 dnl Most of these things are boiler plate (from autoscan);
 dnl but here's some of my stuff
 dnl BEGIN EMMETT's BLOCK OF STUFF
 
-dnl NOTHING IN HERE YET
+m4_include([m4/check_framework.m4])
+MY_CHECK_FRAMEWORK(OpenGL)
+MY_CHECK_FRAMEWORK(GLUT)
+MY_CHECK_FRAMEWORK(Carbon)
 
 dnl END EMMETT's BLOCK OF STUFF
 
@@ -19,25 +19,22 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 AC_PROG_CC
 
+AC_LANG(C++)
+
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lGL':
 AC_CHECK_LIB([GL], [main])
-# FIXME: Replace `main' with a function in `-lasound':
 AC_CHECK_LIB([asound], [main])
-# FIXME: Replace `main' with a function in `-lglut':
 AC_CHECK_LIB([glut], [main])
-# FIXME: Replace `main' with a function in `-ljack':
 AC_CHECK_LIB([jack], [main])
-# FIXME: Replace `main' with a function in `-lportaudio':
 AC_CHECK_LIB([portaudio], [main])
-# FIXME: Replace `main' with a function in `-lrt':
 AC_CHECK_LIB([rt], [main])
-# FIXME: Replace `main' with a function in `-lsndfile':
 AC_CHECK_LIB([sndfile], [main])
+
+#cp confdefs.h my_conf.h
 
 # Checks for header files.
 AC_PATH_X
-AC_CHECK_HEADERS([inttypes.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([inttypes.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h iostream stdio.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL

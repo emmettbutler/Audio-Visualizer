@@ -18,19 +18,26 @@ CFLAGS = $(CPPFLAGS) @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 INSTALL = @INSTALL@
+# init awful hardcoding....
+# this would all be better if i could find how to construct lists in m4 macros
+FRAMEWORK_CARBON = @FRAMEWORK_CARBON@
+FRAMEWORK_OPENGL = @FRAMEWORK_OPENGL@
+FRAMEWORK_GLUT = @FRAMEWORK_GLUT@
+FRAMEWORKS = $(FRAMEWORK_GLUT) $(FRAMEWORK_OPENGL) $(FRAMEWORK_CARBON)
+# end horribleness
 
 MAIN = Visualizer
 SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-GRAPHICSLIBS = -lglut -lGL # linux only
-GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT # mac only
-AUDIOLIBS = -lportaudio -lsndfile # linux/mac
-AUDIOLIBS_SYS = -lrt -ljack -lasound # linux only
+#GRAPHICSLIBS = -lglut -lGL # linux only
+#GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT # mac only
+#AUDIOLIBS = -lportaudio -lsndfile # linux/mac
+#AUDIOLIBS_SYS = -lrt -ljack -lasound # linux only
 
 all: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o libportaudio.a $(GRAPHICSLIBS) $(AUDIOLIBS) $(AUDIOLIBS_SYS)
+	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(LIBS) $(FRAMEWORKS)
 
 osx: $(MAIN).o graphics_helper.o audio_helper.o externals
 	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS_OSX) $(AUDIOLIBS)

@@ -32,3 +32,6 @@ config.status
 *.tgz
 
 chibitech.wav
+
+autom4te.cache
+autom4te.cache/
