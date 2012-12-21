@@ -25,6 +25,8 @@ audio_main
 # autoconf stuff
 Makefile
 config.h
+config.log
+config.status
 
 *.tgz
 
