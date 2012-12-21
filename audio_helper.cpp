@@ -10,25 +10,20 @@ SF_Container sf;
 WindowType wt;
 bool finished;
 
-//initialize PA; return a PaStreamParameters for use with startAudio()
-PaStreamParameters getOutputParams(){
-    PaStreamParameters outputParams;
+//return a PaStreamParameters for use with startAudio()
+PaStreamParameters getStreamParams(bool output){
+    PaStreamParameters params;
     PaError error;
 
-    Pa_Initialize();
-    outputParams.device = Pa_GetDefaultOutputDevice();
-    outputParams.channelCount = OUT_CHANNELS;
-    outputParams.sampleFormat = paFloat32;
-    outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
-    outputParams.hostApiSpecificStreamInfo = NULL;
+    params.device = (output) ? Pa_GetDefaultOutputDevice() : Pa_GetDefaultInputDevice();
+    params.channelCount = (output) ? OUT_CHANNELS : IN_CHANNELS;
+    params.sampleFormat = paFloat32;
+    if (output)
+    	params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowOutputLatency;
+    else params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowInputLatency;
+    params.hostApiSpecificStreamInfo = NULL;
 
-    return outputParams;
-}
-
-PaStreamParameters getInputParams(){
-	PaStreamParameters inputParams;
-	PaError error;
-
+    return params;
 }
 
 static int paCallback( const void *inputBuffer,
@@ -92,6 +87,7 @@ static int paCallback( const void *inputBuffer,
 //return true if no error; else print error msg and return false
 bool printError(PaError error, string msg){
     if (error == paNoError) return true;
+    //sorry for the cout
     else cout << msg << Pa_GetErrorText(error) << endl;
     return false;
 }
@@ -109,7 +105,8 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
     }
 
     //port audio stuff
-    PaStreamParameters outputParams = getOutputParams();
+    Pa_Initialize();
+    PaStreamParameters outputParams = getStreamParams(true);
     PaError error;
 
     error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);

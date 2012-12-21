@@ -6,6 +6,7 @@
 #include <math.h>
 
 #define OUT_CHANNELS 2
+#define IN_CHANNELS 1
 #define SAMPLE_RATE 48000
 #define BUFFER 256
 #define MONO 1
@@ -27,7 +28,7 @@ typedef enum _WindowType {
     Cosine
 } WindowType;
 
-PaStreamParameters getOutputParams();
+PaStreamParameters getStreamParams(bool output);
 float window(float sample, int index, int width, WindowType windowType);
 bool printError(PaError error, string msg);
 
