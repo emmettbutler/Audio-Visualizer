@@ -22,6 +22,7 @@ bool multiMacro = false;
 extern bool finished;
 
 void printUsage(const char *name){
+    // TODO - add a -f option for file input, default to line in
     printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]\n", name);
     exit(1);
 }
