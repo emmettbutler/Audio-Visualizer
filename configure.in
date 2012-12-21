@@ -1,0 +1,56 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.68])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+
+dnl Most of these things are boiler plate (from autoscan);
+dnl but here's some of my stuff
+dnl BEGIN EMMETT's BLOCK OF STUFF
+
+dnl NOTHING IN HERE YET
+
+dnl END EMMETT's BLOCK OF STUFF
+
+AC_CONFIG_SRCDIR([audio_helper.cpp])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-lGL':
+AC_CHECK_LIB([GL], [main])
+# FIXME: Replace `main' with a function in `-lasound':
+AC_CHECK_LIB([asound], [main])
+# FIXME: Replace `main' with a function in `-lglut':
+AC_CHECK_LIB([glut], [main])
+# FIXME: Replace `main' with a function in `-ljack':
+AC_CHECK_LIB([jack], [main])
+# FIXME: Replace `main' with a function in `-lportaudio':
+AC_CHECK_LIB([portaudio], [main])
+# FIXME: Replace `main' with a function in `-lrt':
+AC_CHECK_LIB([rt], [main])
+# FIXME: Replace `main' with a function in `-lsndfile':
+AC_CHECK_LIB([sndfile], [main])
+
+# Checks for header files.
+AC_PATH_X
+AC_CHECK_HEADERS([inttypes.h stddef.h stdint.h stdlib.h string.h sys/time.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
+AC_TYPE_UINT64_T
+AC_CHECK_TYPES([ptrdiff_t])
+
+# Checks for library functions.
+AC_HEADER_MAJOR
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([gettimeofday sqrt strcasecmp strchr strstr])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
