@@ -6,3 +6,4 @@ TO-DO Items
 - lots of shapes/colors presets
 - get off of glut and enable fullscreen
 - allow layering / fading between two "screens"
+- allow MIDI control
