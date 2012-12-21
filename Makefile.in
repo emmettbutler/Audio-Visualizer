@@ -19,7 +19,7 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 INSTALL = @INSTALL@
 
-# init awful hardcoding....
+# init (arguably) awful hardcoding....
 # this would all be better if i could find how to construct lists in m4 macros
 FRAMEWORKS = @FRAMEWORK_GLUT@ @FRAMEWORK_OPENGL@ @FRAMEWORK_CARBON@
 # end horribleness
