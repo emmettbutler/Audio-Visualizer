@@ -22,6 +22,10 @@
 audio_main
 *.dSYM/
 
+# autoconf stuff
+Makefile
+config.h
+
 *.tgz
 
 chibitech.wav
