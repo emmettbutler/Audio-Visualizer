@@ -4,7 +4,7 @@ SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
 GRAPHICSLIBS = -lglut -lGL
-GRAPHICSLIBS_OSX = -framework OpenGL
+GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT
 AUDIOLIBS = -lportaudio -lsndfile
 AUDIOLIBS_SYS = -lrt -ljack -lasound
 CC = g++ -g

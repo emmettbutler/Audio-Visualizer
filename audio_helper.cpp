@@ -25,6 +25,12 @@ PaStreamParameters getOutputParams(){
     return outputParams;
 }
 
+PaStreamParameters getInputParams(){
+	PaStreamParameters inputParams;
+	PaError error;
+
+}
+
 static int paCallback( const void *inputBuffer,
     void *outputBuffer,
     unsigned long framesPerBuffer,
