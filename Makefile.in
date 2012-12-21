@@ -1,47 +1,66 @@
+SHELL = /bin/sh
+VPATH = @srcdir@
+
+subdirs = @subdirs@
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = $(exec_prefix)/bin
+infodir = $(prefix)/info
+libdir = $(prefix)/lib/gnudl
+mandir = $(prefix)/man/man1
+
+CC = @CC@
+CXX = @CXX@
+CPPFLAGS = @CPPFLAGS@
+CFLAGS = $(CPPFLAGS) @CFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+INSTALL = @INSTALL@
+
 MAIN = Visualizer
 SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-GRAPHICSLIBS = -lglut -lGL
-GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT
-AUDIOLIBS = -lportaudio -lsndfile
-AUDIOLIBS_SYS = -lrt -ljack -lasound
-CC = g++ -g
+GRAPHICSLIBS = -lglut -lGL # linux only
+GRAPHICSLIBS_OSX = -framework Carbon -framework OpenGL -framework GLUT # mac only
+AUDIOLIBS = -lportaudio -lsndfile # linux/mac
+AUDIOLIBS_SYS = -lrt -ljack -lasound # linux only
 
 all: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CC) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o libportaudio.a $(GRAPHICSLIBS) $(AUDIOLIBS) $(AUDIOLIBS_SYS)
+	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o libportaudio.a $(GRAPHICSLIBS) $(AUDIOLIBS) $(AUDIOLIBS_SYS)
 
 osx: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CC) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS_OSX) $(AUDIOLIBS)
+	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(GRAPHICSLIBS_OSX) $(AUDIOLIBS)
 
 $(MAIN).o : $(MAIN).cpp
-	$(CC) $(INCDIRS) -c $(MAIN).cpp
+	$(CXX) $(INCDIRS) -c $(MAIN).cpp
 
 graphics_helper.o : graphics_helper.cpp
-	$(CC) $(INCDIRS) -c graphics_helper.cpp
+	$(CXX) $(INCDIRS) -c graphics_helper.cpp
 
 audio_helper.o : audio_helper.cpp
-	$(CC) -c audio_helper.cpp
+	$(CXX) -c audio_helper.cpp
 
 audio_only :
-	$(CC) audio_helper.cpp audio_main.cpp -o audio_main $(AUDIOLIBS)
+	$(CXX) audio_helper.cpp audio_main.cpp -o audio_main $(AUDIOLIBS)
 
 externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 
 GLShaderManager.o : $(SHAREDPATH)GLShaderManager.cpp
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLShaderManager.cpp
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)GLShaderManager.cpp
 GLTriangleBatch.o : $(SHAREDPATH)GLTriangleBatch.cpp
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLTriangleBatch.cpp
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)GLTriangleBatch.cpp
 GLBatch.o : $(SHAREDPATH)GLBatch.cpp
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLBatch.cpp
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)GLBatch.cpp
 GLTools.o : $(SHAREDPATH)GLTools.cpp
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)GLTools.cpp
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)GLTools.cpp
 glew.o : $(SHAREDPATH)glew.c
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)glew.c
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)glew.c
 math3d.o : $(SHAREDPATH)math3d.cpp
-	$(CC) $(INCDIRS) -c $(SHAREDPATH)math3d.cpp
-
+	$(CXX) $(INCDIRS) -c $(SHAREDPATH)math3d.cpp
 
 clean:
 	rm -rf *.dSYM *.o .*.un~ .*.swp $(MAIN)
