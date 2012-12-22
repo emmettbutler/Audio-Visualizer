@@ -24,6 +24,9 @@ static GLfloat r = 1.0;
 static GLfloat g = 1.0;
 static GLfloat b = 1.0;
 
+// TODO - having these all as separate externs is messy
+// define a mapping of ints(indices) to parameters
+// then store these as a bool array
 extern bool autoRotate;
 extern bool flashColors;
 extern bool expTranslate;
@@ -53,7 +56,6 @@ void RenderScene(void){
 
     currentFrame = getLatestBufferIndex();
 
-    // cycle through a crazy color loop
     if(flashColors){
         vBarColor[0] = .7;
         vBarColor[1] = .2 + sharedBuffer[currentFrame].averageAmp * 60;
@@ -212,6 +214,8 @@ void mouseFunc(int x, int y){
     prevMouse[1] = y;
 }
 
+// TODO - do all of this manually
+// http://stackoverflow.com/questions/879035/initializing-opengl-without-glut
 // glut initialization
 void setupGlut(int count, char *values[]){
     gltSetWorkingDirectory(values[0]);

@@ -31,14 +31,15 @@ int main(int argc, char *argv[]){
     if(argc < 2){
         printUsage(argv[0]);
     }
-    //sound initialization by David Coss
     PaStream *stream;
 
     sharedBuffer = (Packet *)malloc(sizeof(Packet) * BUFFER_SIZE);
 
     const char *windowName = "";
     const char *shapeName = "";
-    // check for args
+    // TODO - proper commandline flag checking
+    // eg allow either "-c -t -m -w hann" or "-ctm -w hann"
+    // TODO - condense this mess into bool* processArgs()
     for(int i = 0; i < argc; i++){
         if(i + 1 > argc) break;
         if(strcasecmp("-c", argv[i]) == 0){
@@ -74,12 +75,11 @@ int main(int argc, char *argv[]){
         }
     }
 
-    //set windowName if arg is specified
-    //start audio
     if (!startAudio(stream, argv[1], windowName)){
         exit(1);
     }
 
+    // TODO - get rid of glut stuff and set up context manually
     setupGlut(argc, argv);
 
     GLenum err = glewInit();
