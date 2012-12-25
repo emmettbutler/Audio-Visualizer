@@ -1,6 +1,10 @@
 #include "graphics_helper.h"
 #include "Visualizer.h"
 
+#include <map>
+#include <string>
+#include <iostream>
+
 const int NUM_MACROS = 20;
 
 GLShaderManager shaderManager;
@@ -27,10 +31,8 @@ static GLfloat b = 1.0;
 // TODO - having these all as separate externs is messy
 // define a mapping of ints(indices) to parameters
 // then store these as a bool array
-extern bool autoRotate;
-extern bool flashColors;
-extern bool expTranslate;
-extern bool multiMacro;
+extern std::map<char, std::string> compoundArgsMap;
+extern std::map<char, bool> simpleArgsMap;
 
 extern bool mouseRotate;
 
@@ -56,7 +58,7 @@ void RenderScene(void){
 
     currentFrame = getLatestBufferIndex();
 
-    if(flashColors){
+    if(simpleArgsMap['c']){
         vBarColor[0] = .7;
         vBarColor[1] = .2 + sharedBuffer[currentFrame].averageAmp * 60;
         vBarColor[2] = 1.0;
@@ -74,7 +76,7 @@ void RenderScene(void){
     M3DMatrix44f mCamera;
     cameraFrame.GetCameraMatrix(mCamera);
     modelViewMatrix.PushMatrix(mCamera);
-    if(autoRotate){
+    if(compoundArgsMap['r'] == "auto"){
         cameraFrame.RotateWorld(.01, 0.0, 0.0, 1.0);
         cameraFrame.MoveForward(-.1 * sin(yRot * .05));
     }
@@ -85,7 +87,7 @@ void RenderScene(void){
     m3dTransformVector4(vLightEyePos, vLightPos, mCamera);
 
     for(int m = 0; m < NUM_MACROS; m++){
-        if(multiMacro){
+        if(simpleArgsMap['m']){
             modelViewMatrix.PushMatrix();
             macros[m].refFrame.RotateLocalY(.01 * macros[m].multiplier);
             macros[m].refFrame.RotateLocalX(.5 * sharedBuffer[currentFrame].averageAmp);
@@ -96,7 +98,7 @@ void RenderScene(void){
             GLfloat y = 5 * fabs(sharedBuffer[currentFrame].frames[i][0]);
             modelViewMatrix.MultMatrix(bars[i]);
             modelViewMatrix.Scale(barWidth, y, sharedBuffer[currentFrame].averageAmp * 4);
-            if(expTranslate){
+            if(simpleArgsMap['t']){
                 modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
             }
             shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
@@ -106,7 +108,7 @@ void RenderScene(void){
             cubeBatch.Draw();
             modelViewMatrix.PopMatrix();
         }
-        if(multiMacro){
+        if(simpleArgsMap['m']){
             modelViewMatrix.PopMatrix();
         }
     }
@@ -134,35 +136,35 @@ void keyboardFunc(unsigned char key, int x, int y){
         }
 
         if(presetStep == 0){
-            autoRotate = true;
-            flashColors = false;
-            expTranslate = false;
-            multiMacro = false;
+            compoundArgsMap['r'] = "auto";
+            simpleArgsMap['c'] = false;
+            simpleArgsMap['t'] = false;
+            simpleArgsMap['m'] = false;
         } else if(presetStep == 1){
-            autoRotate = true;
-            flashColors = true;
-            expTranslate = false;
-            multiMacro = false;
+            compoundArgsMap['r'] = "auto";
+            simpleArgsMap['c'] = true;
+            simpleArgsMap['t'] = false;
+            simpleArgsMap['m'] = false;
         } else if(presetStep == 2){
-            autoRotate = true;
-            flashColors = true;
-            expTranslate = true;
-            multiMacro = false;
+            compoundArgsMap['r'] = "auto";
+            simpleArgsMap['c'] = true;
+            simpleArgsMap['t'] = true;
+            simpleArgsMap['m'] = false;
         } else if(presetStep == 3){
-            autoRotate = false;
-            flashColors = true;
-            expTranslate = false;
-            multiMacro = true;
+            compoundArgsMap['r'] = "";
+            simpleArgsMap['c'] = true;
+            simpleArgsMap['t'] = false;
+            simpleArgsMap['m'] = true;
         } else if(presetStep == 4){
-            autoRotate = false;
-            flashColors = true;
-            expTranslate = true;
-            multiMacro = true;
+            compoundArgsMap['r'] = "";
+            simpleArgsMap['c'] = true;
+            simpleArgsMap['t'] = true;
+            simpleArgsMap['m'] = true;
         } else if(presetStep == 5){
-            autoRotate = false;
-            flashColors = false;
-            expTranslate = false;
-            multiMacro = false;
+            compoundArgsMap['r'] = "";
+            simpleArgsMap['c'] = false;
+            simpleArgsMap['t'] = false;
+            simpleArgsMap['m'] = false;
             glClearColor(1.0, 1.0, 1.0, 1.0);
         }
     }
@@ -195,7 +197,7 @@ void ChangeSize(int nWidth, int nHeight){
 
 // called when mouse moves
 void mouseFunc(int x, int y){
-    if(!mouseRotate) return;
+    if(compoundArgsMap['r'] != "mouse") return;
 
     float drag = .003;
 
@@ -234,7 +236,7 @@ void setupGlut(int count, char *values[]){
 }
 
 // rendering context initialization
-void SetupRC(const char* shape){
+void SetupRC(){
     shaderManager.InitializeStockShaders();
     glEnable(GL_DEPTH_TEST);
     glClearColor(r, g, b, 1.0f);
@@ -245,10 +247,10 @@ void SetupRC(const char* shape){
 
     // TODO - make these selectable
     for(int i = 0; i < PACKET_SIZE; i++){
-        if(strcasecmp("circle", shape) == 0){
+        if(compoundArgsMap['s'] == "circle"){
             x = sin(i * .1);
             y = cos(i * .1);
-        } else if(strcasecmp("wave", shape) == 0){
+        } else if(compoundArgsMap['s'] == "wave"){
             x = -(PACKET_SIZE * .5 * barWidth * .2) + i * barWidth * .2;
             y = cos(i * .1);
         } else{

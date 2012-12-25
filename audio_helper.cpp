@@ -4,8 +4,12 @@
 #include "Visualizer.h"
 #include <string.h>
 #include <fftw3.h>
+#include <map>
+#include <string>
 
 extern Packet *sharedBuffer;
+extern std::map<char, std::string> compoundArgsMap;
+extern std::map<char, bool> simpleArgsMap;
 SF_Container sf;
 WindowType wt;
 bool finished;
@@ -26,8 +30,8 @@ PaStreamParameters getOutputParams(){
 }
 
 PaStreamParameters getInputParams(){
-	PaStreamParameters inputParams;
-	PaError error;
+    PaStreamParameters inputParams;
+    PaError error;
 
 }
 
@@ -97,7 +101,7 @@ bool printError(PaError error, string msg){
 }
 
 //open and start the audio stream - takes stream, callback function, and userdata
-bool startAudio(PaStream *stream, const char* filename, const char* windowname){
+bool startAudio(PaStream *stream, const char* filename){
     //open file
     if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
         printf("Error opening file (see manual for accepted formats)\n");
@@ -117,11 +121,10 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 
     //get window type
     WindowType windowType;
-    if (!strcasecmp(windowname, "hann")) windowType = Hann;
-    else if (!strcasecmp(windowname, "hamming")) windowType = Hamming;
-    else if (!strcasecmp(windowname, "cosine")) windowType = Cosine;
+    if (compoundArgsMap['w'] == "hann") windowType = Hann;
+    else if (compoundArgsMap['w'] == "hamming") windowType = Hamming;
+    else if (compoundArgsMap['w'] == "cosine") windowType = Cosine;
     else{
-        printf("Unknown window type argument '%s'\n", windowname);
         windowType = Rect;
     }
 
