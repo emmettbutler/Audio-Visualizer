@@ -31,14 +31,17 @@ SHAREDPATH = GLTools/src/
 SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
-all: $(MAIN).o graphics_helper.o audio_helper.o externals
-	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(STATICLIBS) $(LIBS) $(FRAMEWORKS)
+all: $(MAIN).o graphics_helper.o audio_helper.o ArgMapper.o externals
+	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o ArgMapper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(STATICLIBS) $(LIBS) $(FRAMEWORKS)
 
 $(MAIN).o : $(MAIN).cpp
 	$(CXX) $(INCDIRS) -c $(MAIN).cpp
 
 graphics_helper.o : graphics_helper.cpp
 	$(CXX) $(INCDIRS) -c graphics_helper.cpp
+
+ArgMapper.o : ArgMapper.cpp
+	$(CXX) $(INCDIRS) -c ArgMapper.cpp
 
 audio_helper.o : audio_helper.cpp
 	$(CXX) -c audio_helper.cpp

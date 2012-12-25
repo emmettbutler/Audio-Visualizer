@@ -14,13 +14,13 @@
 #include "graphics_helper.h"
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include "ArgMapper.h"
 
 extern Packet *sharedBuffer;
 extern bool finished;
 char simpleArgs[] = {'c', 't', 'm'};
 char compoundArgs[] = {'w', 's', 'r'};
-std::map<char, std::string> compoundArgsMap;
-std::map<char, bool> simpleArgsMap;
+ArgMapper mapper;
 
 void printUsage(const char *name){
     // TODO - add a -f option for file input, default to line in
@@ -50,9 +50,9 @@ void processArgs(int numInputArgs, char *strings[]){
             curLength = strlen(strings[i]);
             for(j = 0; j < sizeof(simpleArgs) / sizeof(char); j++){
                 if(findInString(simpleArgs[j], strings[i], strlen(strings[i])) > 0){
-                    simpleArgsMap[simpleArgs[j]] = true;
-                } else if(!simpleArgsMap[simpleArgs[j]]){  // don't unset
-                    simpleArgsMap[simpleArgs[j]] = false;
+                    mapper.setSimpleArg(simpleArgs[j], true);
+                } else if(!mapper.getSimpleArg(simpleArgs[j])){  // don't unset
+                    mapper.setSimpleArg(simpleArgs[j], false);
                 }
             }
             for(j = 0; j < sizeof(compoundArgs) / sizeof(char); j++){
@@ -61,7 +61,7 @@ void processArgs(int numInputArgs, char *strings[]){
                     if(curLength > 2 || i+1 == numInputArgs){
                         printUsage(strings[0]);
                     } else {
-                        compoundArgsMap[compoundArgs[j]] = strings[i+1];
+                        mapper.setCompoundArg(compoundArgs[j], strings[i+1]);
                     }
                 }
             }

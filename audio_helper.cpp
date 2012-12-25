@@ -2,14 +2,14 @@
 
 #include "audio_helper.h"
 #include "Visualizer.h"
+#include "ArgMapper.h"
 #include <string.h>
 #include <fftw3.h>
 #include <map>
 #include <string>
 
 extern Packet *sharedBuffer;
-extern std::map<char, std::string> compoundArgsMap;
-extern std::map<char, bool> simpleArgsMap;
+extern ArgMapper mapper;
 SF_Container sf;
 WindowType wt;
 bool finished;
@@ -121,9 +121,10 @@ bool startAudio(PaStream *stream, const char* filename){
 
     //get window type
     WindowType windowType;
-    if (compoundArgsMap['w'] == "hann") windowType = Hann;
-    else if (compoundArgsMap['w'] == "hamming") windowType = Hamming;
-    else if (compoundArgsMap['w'] == "cosine") windowType = Cosine;
+    std::string win = mapper.getCompoundArg('w');
+    if (win == "hann") windowType = Hann;
+    else if (win == "hamming") windowType = Hamming;
+    else if (win == "cosine") windowType = Cosine;
     else{
         windowType = Rect;
     }
