@@ -18,14 +18,19 @@
 
 extern Packet *sharedBuffer;
 extern bool finished;
-char simpleArgs[] = {'c', 't', 'm'};
-char compoundArgs[] = {'w', 's', 'r'};
+const char simpleArgs[] = {'c', 't', 'm', 'h'};
+const char compoundArgs[] = {'w', 's', 'r'};
 ArgMapper mapper;
 
 void printUsage(const char *name){
     // TODO - add a -f option for file input, default to line in
     printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]\n", name);
     exit(1);
+}
+
+void printHelpMessage(const char *name){
+    // unimplemented, write (or generate) a help message here
+    printUsage(name);
 }
 
 int findInString(char needle, char *haystack, int haystackLen){
@@ -50,6 +55,9 @@ void processArgs(int numInputArgs, char *strings[]){
             curLength = strlen(strings[i]);
             for(j = 0; j < sizeof(simpleArgs) / sizeof(char); j++){
                 if(findInString(simpleArgs[j], strings[i], strlen(strings[i])) > 0){
+                    if(simpleArgs[j] == 'h'){
+                        printHelpMessage(strings[0]);
+                    }
                     mapper.setSimpleArg(simpleArgs[j], true);
                 } else if(!mapper.getSimpleArg(simpleArgs[j])){  // don't unset
                     mapper.setSimpleArg(simpleArgs[j], false);
