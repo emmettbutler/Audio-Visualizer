@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+// c++ includes
 #include <map>
 #include <string>
 #include <iostream>
 
-// PortAudio includes
+// 3rd party includes
 #include <sndfile.h>
 #include <portaudio.h>
 
@@ -21,6 +23,14 @@ extern bool finished;
 const char simpleArgs[] = {'c', 't', 'm', 'h'};
 const char compoundArgs[] = {'w', 's', 'r'};
 ArgMapper mapper;
+
+///////////////////////////
+
+extern Display                 *dpy;
+extern Window                  win;
+extern GLXContext              glc;
+extern XWindowAttributes       gwa;
+extern XEvent                  xev;
 
 void printUsage(const char *name){
     // TODO - add a -f option for file input, default to line in
@@ -89,15 +99,17 @@ int main(int argc, char *argv[]){
 
     // TODO - get rid of glut stuff and set up context manually
     setupGlut(argc, argv);
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err){
-        fprintf(stderr, "GLEW Error: %s\n", glewGetErrorString(err));
-        exit(1);
-    }
-
     SetupRC();
-    glutMainLoop();
+
+    while(true) {
+        XNextEvent(dpy, &xev);
+        if(xev.type == Expose) {
+            XGetWindowAttributes(dpy, win, &gwa);
+                glViewport(0, 0, gwa.width, gwa.height);
+            RenderScene();
+                glXSwapBuffers(dpy, win);
+        }
+    }
 
     free(sharedBuffer);
     endAudio(stream);

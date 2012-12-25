@@ -32,19 +32,19 @@ SHAREDINCPATH = GLTools/include/
 INCDIRS = -I$(SHAREDINCPATH) -I$(SHAREDINCPATH)GL
 
 all: $(MAIN).o graphics_helper.o audio_helper.o ArgMapper.o externals
-	$(CXX) $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o ArgMapper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(STATICLIBS) $(LIBS) $(FRAMEWORKS)
+	$(CXX) -g $(INCDIRS) -o $(MAIN) $(MAIN).o graphics_helper.o ArgMapper.o audio_helper.o glew.o GLTools.o GLBatch.o GLTriangleBatch.o GLShaderManager.o math3d.o $(STATICLIBS) $(LIBS) $(FRAMEWORKS)
 
 $(MAIN).o : $(MAIN).cpp
-	$(CXX) $(INCDIRS) -c $(MAIN).cpp
+	$(CXX) -g $(INCDIRS) -c $(MAIN).cpp
 
 graphics_helper.o : graphics_helper.cpp
-	$(CXX) $(INCDIRS) -c graphics_helper.cpp
+	$(CXX) -g $(INCDIRS) -c graphics_helper.cpp
 
 ArgMapper.o : ArgMapper.cpp
-	$(CXX) $(INCDIRS) -c ArgMapper.cpp
+	$(CXX) -g $(INCDIRS) -c ArgMapper.cpp
 
 audio_helper.o : audio_helper.cpp
-	$(CXX) -c audio_helper.cpp
+	$(CXX) -g -c audio_helper.cpp
 
 externals : GLShaderManager.o GLTriangleBatch.o GLBatch.o GLTools.o glew.o math3d.o
 

@@ -29,6 +29,8 @@ AC_CHECK_LIB([jack], [main])
 AC_CHECK_LIB([rt], [main])
 AC_CHECK_LIB([sndfile], [main])
 AC_CHECK_LIB([portaudio], [main])
+AC_CHECK_LIB([X11], [main])
+AC_CHECK_LIB([GLU], [main])
 
 lpa=`locate -e --regex libportaudio.a$`
 AC_CHECK_FILE($lpa, [AC_SUBST(LIBPORTAUDIOA, $lpa)], [echo "libportaudio.a not found!!"])

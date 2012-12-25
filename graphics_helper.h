@@ -6,6 +6,12 @@
 #include <GLGeometryTransform.h>
 #include <StopWatch.h>
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
+//#include <GL/gl.h>
+#include <GL/glx.h>
+//#include <GL/glu.h>
+
 #ifdef __APPLE__
 #include <glut/glut.h>
 #else
@@ -30,4 +36,5 @@ void RenderScene(void);
 void SpecialKeys(int key, int x, int y);
 void ChangeSize(int nWidth, int nHeight);
 void setupGlut(int count, char *values[]);
+void MainRenderLoop();
 void SetupRC();

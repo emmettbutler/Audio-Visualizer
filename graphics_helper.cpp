@@ -19,6 +19,17 @@ GLFrame bars[PACKET_SIZE];
 MacroFrame macros[NUM_MACROS];
 Packet *sharedBuffer;
 
+Display                 *dpy;
+Window                  root;
+GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+XVisualInfo             *vi;
+Colormap                cmap;
+XSetWindowAttributes    swa;
+Window                  win;
+GLXContext              glc;
+XWindowAttributes       gwa;
+XEvent                  xev;
+
 float barWidth = .11;
 int currentFrame;
 int presetStep = 0;
@@ -95,10 +106,11 @@ void RenderScene(void){
             if(mapper.getSimpleArg('t')){
                 modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
             }
-            shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
+/*            shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                     transformPipeline.GetModelViewMatrix(),
                     transformPipeline.GetProjectionMatrix(),
                     vLightEyePos, vBarColor);
+*/
             cubeBatch.Draw();
             modelViewMatrix.PopMatrix();
         }
@@ -112,9 +124,6 @@ void RenderScene(void){
 
     modelViewMatrix.PopMatrix();
     modelViewMatrix.PopMatrix();
-
-    glutSwapBuffers();
-    glutPostRedisplay();
 
     if(currentFrame != -1){
         sharedBuffer[currentFrame].free = true;
@@ -214,28 +223,43 @@ void mouseFunc(int x, int y){
 // http://stackoverflow.com/questions/879035/initializing-opengl-without-glut
 // glut initialization
 void setupGlut(int count, char *values[]){
-    gltSetWorkingDirectory(values[0]);
+    dpy = XOpenDisplay(NULL);
+    if(dpy == NULL) {
+        printf("\n\tcannot connect to X server\n\n");
+            exit(0);
+    }
 
-    glutInit(&count, values);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(1200, 400);
+    root = DefaultRootWindow(dpy);
 
-    glutCreateWindow("Audio Vis");
+    vi = glXChooseVisual(dpy, 0, att);
 
-    glutReshapeFunc(ChangeSize);
-    glutDisplayFunc(RenderScene);
-    glutSpecialFunc(SpecialKeys);
-    glutMotionFunc(mouseFunc);
-    glutKeyboardFunc(keyboardFunc);
+    if(vi == NULL) {
+        printf("\n\tno appropriate visual found\n\n");
+        exit(0);
+    } else {
+        printf("\n\tvisual %p selected\n", (void *)vi->visualid);
+    }
+    cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
+    swa.colormap = cmap;
+    swa.event_mask = ExposureMask | KeyPressMask;
+
+    win = XCreateWindow(dpy, root, 0, 0, 600, 600, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+
+    XMapWindow(dpy, win);
+    XStoreName(dpy, win, "Audio Vis");
+
+    glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+    glXMakeCurrent(dpy, win, glc);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 // rendering context initialization
 void SetupRC(){
-    shaderManager.InitializeStockShaders();
-    glEnable(GL_DEPTH_TEST);
+    //shaderManager.InitializeStockShaders();
     glClearColor(r, g, b, 1.0f);
 
-    gltMakeCube(cubeBatch, .1f);
+    //gltMakeCube(cubeBatch, .1f);
 
     GLfloat x, y;
 
