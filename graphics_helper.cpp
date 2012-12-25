@@ -17,7 +17,6 @@ GLMatrixStack modelViewMatrix;
 GLFrame cameraFrame;
 GLFrame bars[PACKET_SIZE];
 MacroFrame macros[NUM_MACROS];
-
 Packet *sharedBuffer;
 
 float barWidth = .11;
@@ -29,12 +28,7 @@ static GLfloat r = 1.0;
 static GLfloat g = 1.0;
 static GLfloat b = 1.0;
 
-// TODO - having these all as separate externs is messy
-// define a mapping of ints(indices) to parameters
-// then store these as a bool array
 extern ArgMapper mapper;
-
-extern bool mouseRotate;
 
 // shared audio buffer management
 int getLatestBufferIndex(){
@@ -50,7 +44,7 @@ int getLatestBufferIndex(){
     return latest;
 }
 
-// main rednering loop
+// main rendering loop
 void RenderScene(void){
     static CStopWatch rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
@@ -245,7 +239,7 @@ void SetupRC(){
 
     GLfloat x, y;
 
-    // TODO - make these selectable
+    // TODO - enable realtime switching between these (and more)
     for(int i = 0; i < PACKET_SIZE; i++){
         if(mapper.getCompoundArg('s') == "circle"){
             x = sin(i * .1);

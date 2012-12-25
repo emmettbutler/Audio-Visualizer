@@ -48,7 +48,6 @@ void processArgs(int numInputArgs, char *strings[]){
     }
     int curLength = 0, i = 0, j = 0;
     // TODO - check for unknown arguments
-    // TODO - allow a "-h" help output argument
 
     for(i = 0; i < numInputArgs; i++){
         if(strings[i][0] == '-'){
