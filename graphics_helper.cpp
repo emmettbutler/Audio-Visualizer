@@ -57,6 +57,9 @@ int getLatestBufferIndex(){
 
 // main rendering loop
 void RenderScene(void){
+    XGetWindowAttributes(dpy, win, &gwa);
+    glViewport(0, 0, gwa.width, gwa.height);
+
     static CStopWatch rotTimer;
     float yRot = rotTimer.GetElapsedSeconds() * 60.0f;
     GLfloat vBarColor[] = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -106,11 +109,11 @@ void RenderScene(void){
             if(mapper.getSimpleArg('t')){
                 modelViewMatrix.Translate(0.0, sharedBuffer[currentFrame].averageAmp, 0.0);
             }
-/*            shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
+            shaderManager.UseStockShader(GLT_SHADER_POINT_LIGHT_DIFF,
                     transformPipeline.GetModelViewMatrix(),
                     transformPipeline.GetProjectionMatrix(),
                     vLightEyePos, vBarColor);
-*/
+
             cubeBatch.Draw();
             modelViewMatrix.PopMatrix();
         }
@@ -124,6 +127,8 @@ void RenderScene(void){
 
     modelViewMatrix.PopMatrix();
     modelViewMatrix.PopMatrix();
+
+    glXSwapBuffers(dpy, win);
 
     if(currentFrame != -1){
         sharedBuffer[currentFrame].free = true;
@@ -222,7 +227,7 @@ void mouseFunc(int x, int y){
 // TODO - do all of this manually
 // http://stackoverflow.com/questions/879035/initializing-opengl-without-glut
 // glut initialization
-void setupGlut(int count, char *values[]){
+void createWindow(int count, char *values[]){
     dpy = XOpenDisplay(NULL);
     if(dpy == NULL) {
         printf("\n\tcannot connect to X server\n\n");
@@ -252,14 +257,19 @@ void setupGlut(int count, char *values[]){
     glXMakeCurrent(dpy, win, glc);
 
     glEnable(GL_DEPTH_TEST);
+
+    GLenum err = glewInit();
+    if (err != GLEW_OK){
+        exit(1);
+    }
 }
 
 // rendering context initialization
 void SetupRC(){
-    //shaderManager.InitializeStockShaders();
+    shaderManager.InitializeStockShaders();
     glClearColor(r, g, b, 1.0f);
 
-    //gltMakeCube(cubeBatch, .1f);
+    gltMakeCube(cubeBatch, .1f);
 
     GLfloat x, y;
 

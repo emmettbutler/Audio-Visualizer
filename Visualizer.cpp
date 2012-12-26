@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 // c++ includes
 #include <map>
@@ -22,6 +23,7 @@ extern Packet *sharedBuffer;
 extern bool finished;
 const char simpleArgs[] = {'c', 't', 'm', 'h'};
 const char compoundArgs[] = {'w', 's', 'r'};
+struct timeval        tv, tv0;
 ArgMapper mapper;
 
 ///////////////////////////
@@ -98,17 +100,14 @@ int main(int argc, char *argv[]){
     }
 
     // TODO - get rid of glut stuff and set up context manually
-    setupGlut(argc, argv);
+    createWindow(argc, argv);
+
     SetupRC();
+    ChangeSize(gwa.width, gwa.height);
 
     while(true) {
-        XNextEvent(dpy, &xev);
-        if(xev.type == Expose) {
-            XGetWindowAttributes(dpy, win, &gwa);
-                glViewport(0, 0, gwa.width, gwa.height);
-            RenderScene();
-                glXSwapBuffers(dpy, win);
-        }
+        RenderScene();
+        usleep(1000);
     }
 
     free(sharedBuffer);

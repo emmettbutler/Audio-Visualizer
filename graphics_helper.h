@@ -35,6 +35,6 @@ typedef struct _frame{
 void RenderScene(void);
 void SpecialKeys(int key, int x, int y);
 void ChangeSize(int nWidth, int nHeight);
-void setupGlut(int count, char *values[]);
+void createWindow(int count, char *values[]);
 void MainRenderLoop();
 void SetupRC();
