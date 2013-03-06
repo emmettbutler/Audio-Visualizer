@@ -1,9 +1,9 @@
 opengl_audio_vis
 ================
 
-Written by Emmett Butler and David Coss in Fall 2012
+![image](http://24.media.tumblr.com/25c39888ac15999a6c81e9b5f7155f0e/tumblr_mfeitgu6UI1qbeadxo1_1280.gif)
 
-This project provides realtime 3d visualization of mono and stereo WAV audio streams. The visualizations created are mainly abstract and can be considered an emulation of the iTunes (or, more accurately, WMP) visualizer. It uses OpenGL, freeglut, portaudio and libsndfile to create these visuals in real time.
+This project provides realtime 3d visualization of WAV audio streams. The visualizations created are mainly abstract and can be considered an emulation of the iTunes (or, more accurately, WMP) visualizer. It uses OpenGL, freeglut, portaudio and libsndfile to create these visuals in real time.
 
 Invoked from the command line, the visualizer takes the name of an audio file and a number of flags specifying graphical behaviors. These can range from the basic flat waveform to a colorful, dynamic shape of constantly-changing data.
 
