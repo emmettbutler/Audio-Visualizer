@@ -1,4 +1,4 @@
-opengl_audio_vis
+Audio Visualizer
 ================
 
 ![image](http://24.media.tumblr.com/25c39888ac15999a6c81e9b5f7155f0e/tumblr_mfeitgu6UI1qbeadxo1_1280.gif)
