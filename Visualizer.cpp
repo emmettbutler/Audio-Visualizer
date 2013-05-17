@@ -24,7 +24,7 @@ ArgMapper mapper;
 
 void printUsage(const char *name){
     // TODO - add a -f option for file input, default to line in
-    printf("Usage: %s <soundfile> [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]\n", name);
+    printf("Usage: %s [-f soundfile] [-w hamming|hann|cosine] [-c] [-s circle|line|wave] [-t] [-r auto|mouse]\n", name);
     exit(1);
 }
 
@@ -43,9 +43,6 @@ int findInString(char needle, char *haystack, int haystackLen){
 }
 
 void processArgs(int numInputArgs, char *strings[]){
-    if(numInputArgs < 2){
-        printUsage(strings[0]);
-    }
     int curLength = 0, i = 0, j = 0;
     // TODO - check for unknown arguments
 
@@ -83,7 +80,7 @@ int main(int argc, char *argv[]){
 
     processArgs(argc, argv);
 
-    if (!startAudio(stream, argv[1])){
+    if (!startAudio(stream, argv[1], mapper.getCompoundArg('w').c_str())){
         exit(1);
     }
 

@@ -1,5 +1,3 @@
-/* Audio helper functions by David Coss */
-
 #include "audio_helper.h"
 #include "Visualizer.h"
 #include "ArgMapper.h"
@@ -11,28 +9,25 @@
 extern Packet *sharedBuffer;
 extern ArgMapper mapper;
 SF_Container sf;
+
 WindowType wt;
 bool finished;
 
-//initialize PA; return a PaStreamParameters for use with startAudio()
-PaStreamParameters getOutputParams(){
-    PaStreamParameters outputParams;
+//return a PaStreamParameters for use with startAudio()
+//use true for input, false for output
+PaStreamParameters getStreamParams(bool output){
+    PaStreamParameters params;
     PaError error;
 
-    Pa_Initialize();
-    outputParams.device = Pa_GetDefaultOutputDevice();
-    outputParams.channelCount = OUT_CHANNELS;
-    outputParams.sampleFormat = paFloat32;
-    outputParams.suggestedLatency = Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
-    outputParams.hostApiSpecificStreamInfo = NULL;
+    params.device = (output) ? Pa_GetDefaultOutputDevice() : Pa_GetDefaultInputDevice();
+    params.channelCount = (output) ? OUT_CHANNELS : IN_CHANNELS;
+    params.sampleFormat = paFloat32;
+    if (output)
+        params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowOutputLatency;
+    else params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowInputLatency;
+    params.hostApiSpecificStreamInfo = NULL;
 
-    return outputParams;
-}
-
-PaStreamParameters getInputParams(){
-    PaStreamParameters inputParams;
-    PaError error;
-
+    return params;
 }
 
 static int paCallback( const void *inputBuffer,
@@ -44,7 +39,7 @@ static int paCallback( const void *inputBuffer,
 {
     int i, j, bufferIndex;
 
-    float *out = (float*) outputBuffer, sample;
+    float *out = (float*) outputBuffer, *in = (float*) inputBuffer, sample;
     float fileBuffer[framesPerBuffer*PAC_CHANNELS];
     static int order = 0;
 
@@ -61,15 +56,22 @@ static int paCallback( const void *inputBuffer,
     order++;
 
     //get samples from sound file
-    int readcount = sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
+    int readcount = framesPerBuffer;
+    if (!inputBuffer) readcount = sf_readf_float(sf.file, fileBuffer, framesPerBuffer);
+
     //fill buffer with samples from sound file
     for (i=0; i<framesPerBuffer; i++){
-
         for (j=0; j<PAC_CHANNELS; j++){
             //send sample to output buffer
-            if (sf.info.channels == STEREO) sample = fileBuffer[2*i+j];
-            else if (sf.info.channels == MONO) sample = fileBuffer[i];
-            out[2*i + j] = sample;
+            if (!inputBuffer){ //from sound file
+                if (sf.info.channels == STEREO) sample = fileBuffer[STEREO*i+j];
+                else if (sf.info.channels == MONO) sample = fileBuffer[i];
+            }
+            else{ // from mic
+                if (IN_CHANNELS == STEREO) sample = in[STEREO*i + j];
+                else if (IN_CHANNELS == MONO) sample = in[i];
+            }
+            out[STEREO*i + j] = sample;
 
             //window and send sample to shared buffer
             sharedBuffer[bufferIndex].averageAmp += (float)sample;
@@ -77,7 +79,6 @@ static int paCallback( const void *inputBuffer,
                 sample = window(sample, i, framesPerBuffer, wt);
             }
             sharedBuffer[bufferIndex].frames[i][j] = sample;
-
         }
     }
     sharedBuffer[bufferIndex].averageAmp /= (float)framesPerBuffer;
@@ -96,28 +97,48 @@ static int paCallback( const void *inputBuffer,
 //return true if no error; else print error msg and return false
 bool printError(PaError error, string msg){
     if (error == paNoError) return true;
+    //sorry for the cout
     else cout << msg << Pa_GetErrorText(error) << endl;
     return false;
 }
 
 //open and start the audio stream - takes stream, callback function, and userdata
-bool startAudio(PaStream *stream, const char* filename){
-    //open file
-    if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
-        printf("Error opening file (see manual for accepted formats)\n");
-        return false;
-    }
-    if (sf.info.channels != MONO && sf.info.channels != STEREO){
-        printf("Error: file must be stereo or mono");
-        return false;
+bool startAudio(PaStream *stream, const char* filename, const char* windowname){
+
+    InputSource inputSource = filename == NULL ? Mic : File;
+    int samplerate = SAMPLE_RATE; //default if no file specified
+
+    //open file if we're not using Mic
+    if (inputSource == File){
+        if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
+            printf("Error opening file '%s' (see manual for accepted formats)\n", filename);
+            return false;
+        }
+        //force audio file to be mono or stereo (for now)
+        if (sf.info.channels != MONO && sf.info.channels != STEREO){
+            printf("Error: file must be stereo or mono");
+            return false;
+        }
+        samplerate = sf.info.samplerate;
     }
 
-    //port audio stuff
-    PaStreamParameters outputParams = getOutputParams();
+    //port audio init stuff
+    Pa_Initialize();
+    PaStreamParameters outputParams, inputParams;
+    outputParams = getStreamParams(true);
+    inputParams = getStreamParams(false);
+
+    //open the stream
     PaError error;
-
-    error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
-    if (! printError(error, "PortAudio error - open stream: ")) return false;
+    error = Pa_OpenStream(&stream,
+        (inputSource == File) ?  NULL : &inputParams,
+        &outputParams,
+        samplerate,
+        BUFFER,
+        paNoFlag,
+        paCallback,
+        NULL);
+    if (! printError(error, "PortAudio error while opening stream: ")) return false;
 
     //get window type
     WindowType windowType;
@@ -126,16 +147,14 @@ bool startAudio(PaStream *stream, const char* filename){
     else if (win == "hamming") windowType = Hamming;
     else if (win == "cosine") windowType = Cosine;
     else{
+        printf("Unknown window type '%s' - defaulting to Rect\n", windowname);
         windowType = Rect;
     }
-
     wt = windowType;
 
-    error = Pa_OpenStream(&stream, NULL, &outputParams, sf.info.samplerate, BUFFER, paNoFlag, paCallback, NULL);
-    if (! printError(error, "PortAudio error - open stream: ")) return false;
-
+    //start the stream
     error = Pa_StartStream(stream);
-    if (! printError(error, "PortAudio error - start stream: ")) return false;
+    if (! printError(error, "PortAudio error while starting stream: ")) return false;
 
     return true;
 }
