@@ -101,13 +101,13 @@ bool printError(PaError error, string msg){
 //open and start the audio stream - takes stream, callback function, and userdata
 bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 
-    InputSource inputSource = File;
+    InputSource inputSource = filename == NULL ? Mic : File;
     int samplerate = SAMPLE_RATE; //default if no file specified
 
     //open file if we're not using Mic
     if (inputSource == File){
         if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
-            printf("Error opening file (see manual for accepted formats)\n");
+            printf("Error opening file '%s' (see manual for accepted formats)\n", filename);
             return false;
         }
         //force audio file to be mono or stereo (for now)
