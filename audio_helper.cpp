@@ -105,11 +105,12 @@ bool printError(PaError error, string msg){
 //open and start the audio stream - takes stream, callback function, and userdata
 bool startAudio(PaStream *stream, const char* filename, const char* windowname){
 
-    InputSource inputSource = filename == NULL ? Mic : File;
+    InputSource inputSource = strcasecmp(filename, "") == 0 ? Mic : File;
     int samplerate = SAMPLE_RATE; //default if no file specified
 
     //open file if we're not using Mic
     if (inputSource == File){
+        printf("Reading from file %s\n", filename);
         if ((sf.file = sf_open(filename, SFM_READ, &sf.info) ) == NULL) {
             printf("Error opening file '%s' (see manual for accepted formats)\n", filename);
             return false;
@@ -120,6 +121,8 @@ bool startAudio(PaStream *stream, const char* filename, const char* windowname){
             return false;
         }
         samplerate = sf.info.samplerate;
+    } else {
+        printf("Reading from default input\n");
     }
 
     //port audio init stuff

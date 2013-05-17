@@ -19,7 +19,7 @@
 extern Packet *sharedBuffer;
 extern bool finished;
 const char simpleArgs[] = {'c', 't', 'm', 'h'};
-const char compoundArgs[] = {'w', 's', 'r'};
+const char compoundArgs[] = {'f', 'w', 's', 'r'};
 ArgMapper mapper;
 
 void printUsage(const char *name){
@@ -80,7 +80,8 @@ int main(int argc, char *argv[]){
 
     processArgs(argc, argv);
 
-    if (!startAudio(stream, argv[1], mapper.getCompoundArg('w').c_str())){
+    if (!startAudio(stream, mapper.getCompoundArg('f').c_str(),
+                    mapper.getCompoundArg('w').c_str())){
         exit(1);
     }
 
